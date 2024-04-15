@@ -87,6 +87,7 @@ def move_chess(event):
     # Update the position of the 
     sqSelected = (sq_col, sq_row)
     print(sq_row)
+    print(sqSelected)
     
     if first_hod == "white":
         figure = white_pieces
