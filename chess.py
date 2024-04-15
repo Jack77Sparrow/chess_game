@@ -2,13 +2,14 @@ import pygame
 import sys
 import os
 from random import randint
-
+#initializing values
 Dimensions = 8
 whidth = 400
 height = 400
 sq_size = whidth // 8
 size = sq_size // 1.3
 
+#initializing screen
 screen = pygame.display.set_mode((whidth, height))
 pygame.display.set_caption("Chess game")
 # pygame.display.set_icon(pygame.image.load('photos/icon.png'))
@@ -92,6 +93,7 @@ def move_chess(event):
     if first_hod == "white":
         figure = white_pieces
         enemy_pieces = black_pieces
+        
 
     else:
         figure = black_pieces
