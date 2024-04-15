@@ -8,7 +8,7 @@ whidth = 400
 height = 400
 sq_size = whidth // 8
 size = sq_size // 1.3
-
+#new comment
 #initializing screen
 screen = pygame.display.set_mode((whidth, height))
 pygame.display.set_caption("Chess game")
