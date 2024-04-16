@@ -146,3 +146,4 @@ while run_game:
 pygame.quit()
 sys.exit()
 sosi
+sosi
