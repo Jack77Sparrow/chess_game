@@ -4,13 +4,13 @@ import os
 from random import randint
 #initializing values
 Dimensions = 8
-whidth = 400
-height = 400
+whidth = 600
+height = 600
 sq_size = whidth // 8
 size = sq_size // 1.3
-
+pygame.init()
 #initializing screen
-screen = pygame.display.set_mode((whidth, height))
+screen = pygame.display.set_mode((800, height))
 pygame.display.set_caption("Chess game")
 # pygame.display.set_icon(pygame.image.load('photos/icon.png'))
 
@@ -43,6 +43,8 @@ white_pieces = {
     "pawn": [(6, 0), (6, 1), (6, 2), (6, 3), (6, 4), (6, 5), (6, 6), (6, 7)]
 }
 
+
+
 images = {}
 for color in colors:
     for piece in pieces:
@@ -71,10 +73,10 @@ def draw_pieces():
                 for pos in positions:
                     x, y = pos
                     screen.blit(images[f"{color}_{piece_type}"], (y * sq_size + sq_size // 10, x * sq_size + sq_size // 10))
-first_hod = 'white'
+first_hod = 'black'
 def white_or_black():
     global first_hod
-    first_hod = "black" if first_hod == "white" else 'white'
+    first_hod = "white" if first_hod == "black" else 'black'
 
 
 sqSelected = ()  # Текущий выбранный квадрат
@@ -98,6 +100,7 @@ def move_chess(event, end_pos):
     if len(PlayerClick) == 0:  # Если это первый клик
         sqSelected = (sq_col, sq_row)  # Фиксируем текущий выбранный квадрат
         PlayerClick.append(new_pos)  # Добавляем позицию в список кликов игрока
+        
     else:  # Если это второй клик
         # Перемещаем фигуру на новое место
         move_piece(PlayerClick[0], new_pos)
@@ -108,12 +111,13 @@ def move_chess(event, end_pos):
 def move_piece(start_pos, end_pos):
     global white_pieces, black_pieces, first_hod
     
-    if first_hod == "white":
+    if first_hod == "black":
         figure = white_pieces
         enemy_pieces = black_pieces
     else:
         figure = black_pieces
         enemy_pieces = white_pieces
+        
     
     # Проверяем, есть ли фигура на стартовой позиции
     for piece_type in figure:
@@ -132,12 +136,14 @@ def move_piece(start_pos, end_pos):
 
 run_game = True
 while run_game:
+    
     for event in pygame.event.get():
+
         if event.type == pygame.QUIT:
             run_game = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = pygame.mouse.get_pos()
-            white_or_black()
+            
             col = mouse_pos[0] // sq_size
             row = mouse_pos[1] // sq_size
             if sqSelected == (row, col):
@@ -149,30 +155,23 @@ while run_game:
 
         elif event.type == pygame.MOUSEBUTTONUP:
             if len(PlayerClick) == 1:
+                white_or_black()
                 end_pos = pygame.mouse.get_pos()
                 move_chess(mouse_pos, end_pos)
+        elif event.type == pygame.K_DOWN:
+            print("hello")
+            white_or_black()
 
-        # elif event.type == pygame.MOUSEBUTTONUP:
-        #     end_pos = pygame.mouse.get_pos()
-        #     # move_chess(mouse_pos)
-        #     # white_or_black()
-        #     col = end_pos[0] // sq_size
-        #     row = end_pos[1]//sq_size
-        #     if sqSelected == (row, col):
-        #         sqSelected = ()
-        #         PlayerClick = []
-        #     else:
+       
 
-        #         sqSelected = (row, col)
-        #         PlayerClick.append(sqSelected)
-        #     if len(PlayerClick) == 2:
-        #         pass
-        #     move_chess(end_pos)
-
-
+    screen.fill((255,255,255))
     draw_board()
     draw_pieces()
-    
+    # screen.fill((0,0,0))
+    font = pygame.font.Font(None, 40)
+    text = font.render(f"turn: {first_hod}", True, (0, 0, 0))
+    text_rect = text.get_rect(center=(800-100, 50))
+    screen.blit(text, text_rect)
     pygame.display.flip()
     
 pygame.quit()
