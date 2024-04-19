@@ -45,6 +45,7 @@ white_pieces = {
 
 
 
+
 images = {}
 for color in colors:
     for piece in pieces:
@@ -89,12 +90,12 @@ def move_chess(event, end_pos):
     sq_row = row // sq_size
     sq_col = col // sq_size
     pos_g = (sq_col, sq_row)
-    print(pos_g)
+    # print(pos_g)
     end_row, end_col = end_pos
     esq_row = end_row // sq_size
     esq_col = end_col // sq_size
     new_pos = (esq_col, esq_row)
-    print(new_pos)
+    # print(new_pos)
 
     
     if len(PlayerClick) == 0:  # Если это первый клик
@@ -118,18 +119,62 @@ def move_piece(start_pos, end_pos):
         figure = black_pieces
         enemy_pieces = white_pieces
         
-    
+    for type_piece in figure:
+        if start_pos in figure[type_piece]:
+            # print("yes")
+            # print(enemy_pieces)
+            # print(first_hod)
+            if first_hod == "black":
+                # print(first_hod)
+                if end_pos == (start_pos[0]-2, start_pos[1]) or end_pos == (start_pos[0]-1, start_pos[1]):
+                    print("try")
+                    figure[type_piece][figure[type_piece].index(start_pos)] = end_pos
+
+                    for enemy_piece_type in enemy_pieces:
+                        if end_pos in enemy_pieces[enemy_piece_type]:
+                            enemy_pieces[enemy_piece_type].remove(end_pos)
+                    break
+                elif end_pos == (start_pos[0] - 1, start_pos[1] - 1) or end_pos == (start_pos[0] - 1, start_pos[1] + 1):
+                    # Проверяем, находится ли на конечной позиции фигура противоположного цвета
+                    for enemy_piece_type in enemy_pieces:
+                        if end_pos in enemy_pieces[enemy_piece_type]:
+                            # Если да, то совершаем удар и удаляем фигуру противоположного цвета
+                            figure[type_piece][figure[type_piece].index(start_pos)] = end_pos
+                            enemy_pieces[enemy_piece_type].remove(end_pos)
+                            break
+                    
+            else:
+                # print(enemy_piece_type)
+                if end_pos == (start_pos[0]+2, start_pos[1]) or end_pos == (start_pos[0]+1, start_pos[1]):
+                    # if enemy_pieces[]
+                    print("try")
+                    figure[type_piece][figure[type_piece].index(start_pos)] = end_pos
+
+                    for enemy_piece_type in enemy_pieces:
+                        if end_pos in enemy_pieces[enemy_piece_type]:
+                            enemy_pieces[enemy_piece_type].remove(end_pos)
+                    break
+                elif end_pos == (start_pos[0] + 1, start_pos[1] - 1) or end_pos == (start_pos[0] + 1, start_pos[1] + 1):
+                # Проверяем, находится ли на конечной позиции фигура противоположного цвета
+                    for enemy_piece_type in enemy_pieces:
+                        if end_pos in enemy_pieces[enemy_piece_type]:
+                            # Если да, то совершаем удар и удаляем фигуру противоположного цвета
+                            figure[type_piece][figure[type_piece].index(start_pos)] = end_pos
+                            enemy_pieces[enemy_piece_type].remove(end_pos)
+                            break 
+
+
     # Проверяем, есть ли фигура на стартовой позиции
-    for piece_type in figure:
-        if start_pos in figure[piece_type]:
-            print("some")
-            # Если фигура найдена, перемещаем ее на новую позицию
-            figure[piece_type][figure[piece_type].index(start_pos)] = end_pos
-            # Если фигура переместилась на позицию вражеской фигуры, удаляем вражескую фигуру
-            for enemy_piece_type in enemy_pieces:
-                if end_pos in enemy_pieces[enemy_piece_type]:
-                    enemy_pieces[enemy_piece_type].remove(end_pos)
-            break
+    # for piece_type in figure:
+    #     if start_pos in figure[piece_type]:
+            
+    #         # Если фигура найдена, перемещаем ее на новую позицию
+    #         figure[piece_type][figure[piece_type].index(start_pos)] = end_pos
+    #         # Если фигура переместилась на позицию вражеской фигуры, удаляем вражескую фигуру
+    #         for enemy_piece_type in enemy_pieces:
+    #             if end_pos in enemy_pieces[enemy_piece_type]:
+    #                 enemy_pieces[enemy_piece_type].remove(end_pos)
+    #         break
 
 
 
