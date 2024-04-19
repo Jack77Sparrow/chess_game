@@ -8,7 +8,7 @@ whidth = 400
 height = 400
 sq_size = whidth // 8
 size = sq_size // 1.3
-#new comment
+
 #initializing screen
 screen = pygame.display.set_mode((whidth, height))
 pygame.display.set_caption("Chess game")
@@ -77,40 +77,55 @@ def white_or_black():
     first_hod = "black" if first_hod == "white" else 'white'
 
 
-sqSelected = ()
-PlayerClick = []
-def move_chess(event):
-    global white_pieces,first_hod, black_pieces
+sqSelected = ()  # Текущий выбранный квадрат
+PlayerClick = []  # Список для хранения кликов игрока
+
+def move_chess(event, end_pos):
+    global sqSelected, PlayerClick, white_pieces, black_pieces, first_hod
+    
     row, col = event
     sq_row = row // sq_size
     sq_col = col // sq_size
-    new_pos = (sq_col, sq_row)
-    # Update the position of the 
-    sqSelected = (sq_col, sq_row)
-    print(sq_row)
-    print(sqSelected)
+    pos_g = (sq_col, sq_row)
+    print(pos_g)
+    end_row, end_col = end_pos
+    esq_row = end_row // sq_size
+    esq_col = end_col // sq_size
+    new_pos = (esq_col, esq_row)
+    print(new_pos)
+
+    
+    if len(PlayerClick) == 0:  # Если это первый клик
+        sqSelected = (sq_col, sq_row)  # Фиксируем текущий выбранный квадрат
+        PlayerClick.append(new_pos)  # Добавляем позицию в список кликов игрока
+    else:  # Если это второй клик
+        # Перемещаем фигуру на новое место
+        move_piece(PlayerClick[0], new_pos)
+        # Сбрасываем выбранный квадрат и список кликов игрока
+        sqSelected = ()
+        PlayerClick = []
+
+def move_piece(start_pos, end_pos):
+    global white_pieces, black_pieces, first_hod
     
     if first_hod == "white":
         figure = white_pieces
         enemy_pieces = black_pieces
-        
-
     else:
         figure = black_pieces
         enemy_pieces = white_pieces
-    print(figure['pawn'])
-    # print(sqSelected)
-    if sqSelected in figure['pawn']:
-        print('yes')
-        if new_pos == (4, 0):
-
-
-            white_pieces['pawn'][0] = new_pos  # Assuming you're updating the first pawn
-        else:
-            pass
-            
     
-
+    # Проверяем, есть ли фигура на стартовой позиции
+    for piece_type in figure:
+        if start_pos in figure[piece_type]:
+            print("some")
+            # Если фигура найдена, перемещаем ее на новую позицию
+            figure[piece_type][figure[piece_type].index(start_pos)] = end_pos
+            # Если фигура переместилась на позицию вражеской фигуры, удаляем вражескую фигуру
+            for enemy_piece_type in enemy_pieces:
+                if end_pos in enemy_pieces[enemy_piece_type]:
+                    enemy_pieces[enemy_piece_type].remove(end_pos)
+            break
 
 
 
@@ -122,20 +137,37 @@ while run_game:
             run_game = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = pygame.mouse.get_pos()
-            # move_chess(mouse_pos)
             white_or_black()
             col = mouse_pos[0] // sq_size
-            row = mouse_pos[1]//sq_size
+            row = mouse_pos[1] // sq_size
             if sqSelected == (row, col):
                 sqSelected = ()
                 PlayerClick = []
             else:
-
                 sqSelected = (row, col)
                 PlayerClick.append(sqSelected)
-            if len(PlayerClick) == 2:
-                pass
-            move_chess(mouse_pos)
+
+        elif event.type == pygame.MOUSEBUTTONUP:
+            if len(PlayerClick) == 1:
+                end_pos = pygame.mouse.get_pos()
+                move_chess(mouse_pos, end_pos)
+
+        # elif event.type == pygame.MOUSEBUTTONUP:
+        #     end_pos = pygame.mouse.get_pos()
+        #     # move_chess(mouse_pos)
+        #     # white_or_black()
+        #     col = end_pos[0] // sq_size
+        #     row = end_pos[1]//sq_size
+        #     if sqSelected == (row, col):
+        #         sqSelected = ()
+        #         PlayerClick = []
+        #     else:
+
+        #         sqSelected = (row, col)
+        #         PlayerClick.append(sqSelected)
+        #     if len(PlayerClick) == 2:
+        #         pass
+        #     move_chess(end_pos)
 
 
     draw_board()
