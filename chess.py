@@ -120,15 +120,17 @@ def move_piece(start_pos, end_pos):
         enemy_pieces = white_pieces
         
     for type_piece in figure:
-        if start_pos in figure[type_piece]:
-            # print("yes")
+        print(type_piece)
+        figure_type = figure["pawn"]
+        if start_pos in figure_type:
+            print("yes")
             # print(enemy_pieces)
             # print(first_hod)
             if first_hod == "black":
                 # print(first_hod)
                 if end_pos == (start_pos[0]-2, start_pos[1]) or end_pos == (start_pos[0]-1, start_pos[1]):
                     print("try")
-                    figure[type_piece][figure[type_piece].index(start_pos)] = end_pos
+                    figure_type[figure_type.index(start_pos)] = end_pos
 
                     for enemy_piece_type in enemy_pieces:
                         if end_pos in enemy_pieces[enemy_piece_type]:
@@ -139,7 +141,7 @@ def move_piece(start_pos, end_pos):
                     for enemy_piece_type in enemy_pieces:
                         if end_pos in enemy_pieces[enemy_piece_type]:
                             # Если да, то совершаем удар и удаляем фигуру противоположного цвета
-                            figure[type_piece][figure[type_piece].index(start_pos)] = end_pos
+                            figure_type[figure_type.index(start_pos)] = end_pos
                             enemy_pieces[enemy_piece_type].remove(end_pos)
                             break
                     
@@ -148,7 +150,7 @@ def move_piece(start_pos, end_pos):
                 if end_pos == (start_pos[0]+2, start_pos[1]) or end_pos == (start_pos[0]+1, start_pos[1]):
                     # if enemy_pieces[]
                     print("try")
-                    figure[type_piece][figure[type_piece].index(start_pos)] = end_pos
+                    figure["pawn"][figure["pawn"].index(start_pos)] = end_pos
 
                     for enemy_piece_type in enemy_pieces:
                         if end_pos in enemy_pieces[enemy_piece_type]:
@@ -159,9 +161,12 @@ def move_piece(start_pos, end_pos):
                     for enemy_piece_type in enemy_pieces:
                         if end_pos in enemy_pieces[enemy_piece_type]:
                             # Если да, то совершаем удар и удаляем фигуру противоположного цвета
-                            figure[type_piece][figure[type_piece].index(start_pos)] = end_pos
+                            figure_type[figure_type.index(start_pos)] = end_pos
                             enemy_pieces[enemy_piece_type].remove(end_pos)
-                            break 
+                            break
+
+        else:
+            print("no")
 
 
     # Проверяем, есть ли фигура на стартовой позиции
