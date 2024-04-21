@@ -1,7 +1,6 @@
 import pygame
 import sys
 import os
-from random import randint
 from const import *
 
 
@@ -11,12 +10,17 @@ pygame.display.set_caption("Chess game")
 
 
 
+
+    
+
 images = {}
 for color in colors:
     for piece in pieces:
         img_path = os.path.join(image_folder, color, f"{color}_{piece}.png")
         img = pygame.transform.scale(pygame.image.load(img_path), (size, size))
         images[f"{color}_{piece}"] = img
+
+
 
 def draw_board():
     for i in range(Dimensions):
@@ -48,6 +52,11 @@ def white_or_black():
 sqSelected = ()  # Текущий выбранный квадрат
 PlayerClick = []  # Список для хранения кликов игрока
 
+
+class InvalidMoveError(Exception):
+    pass
+
+
 def move_chess(event, end_pos):
     global sqSelected, PlayerClick, white_pieces, black_pieces, first_hod
     
@@ -76,7 +85,8 @@ def move_chess(event, end_pos):
 
 def move_piece(start_pos, end_pos):
     global white_pieces, black_pieces, first_hod
-    
+    global text, text_rect
+    global lists_of_black, lists_of_white
     if first_hod == "black":
         figure = white_pieces
         enemy_pieces = black_pieces
@@ -94,18 +104,24 @@ def move_piece(start_pos, end_pos):
             if first_hod == "black":
                 
 
-                if end_pos == (start_pos[0]-2, start_pos[1]) or end_pos == (start_pos[0]-1, start_pos[1]):
+                if start_pos[0] == 6 and end_pos == (start_pos[0]-2, start_pos[1]) or end_pos == (start_pos[0]-1, start_pos[1]):
                     
-                    if end_pos in black_pieces["pawn"]:
-                        
-                        print("yes")
+                    lists_of_black = []
+                    for b_value in black_pieces.values():
+                        for v in b_value:
+                            lists_of_black.append(v)
+                    print(black_pieces)
+                    # print(lists_of_black)
+                    if end_pos in lists_of_black:
+                        white_or_black()
+                        # print("yes")
                         
                     else:
                         
                         figure_type[figure_type.index(start_pos)] = end_pos
                     
                 elif end_pos == (start_pos[0] - 1, start_pos[1] - 1) or end_pos == (start_pos[0] - 1, start_pos[1] + 1):
-                    print((start_pos[0] - 1, start_pos[1] - 1), (start_pos[0] - 1, start_pos[1] + 1))
+                    # print((start_pos[0] - 1, start_pos[1] - 1), (start_pos[0] - 1, start_pos[1] + 1))
                     # Проверяем, находится ли на конечной позиции фигура противоположного цвета
                     for enemy_piece_type in enemy_pieces:
                         if end_pos in enemy_pieces[enemy_piece_type]:
@@ -113,14 +129,23 @@ def move_piece(start_pos, end_pos):
                             figure_type[figure_type.index(start_pos)] = end_pos
                             enemy_pieces[enemy_piece_type].remove(end_pos)
                             break
-                    
+                else:
+                    if end_pos != start_pos:
+                        white_or_black()
+                   
             else:
                 
-                if end_pos == (start_pos[0]+2, start_pos[1]) or end_pos == (start_pos[0]+1, start_pos[1]):
-                    
-                    if end_pos in white_pieces["pawn"]:
-                        
-                        pass              
+                
+                if start_pos[0] == 1 and end_pos == (start_pos[0]+2, start_pos[1]) or end_pos == (start_pos[0]+1, start_pos[1]):
+                    lists_of_white = []
+                    for w_value in white_pieces.values():
+                        for w in w_value:
+                            lists_of_white.append(w)
+                    # print(lists_of_white)
+                    print(white_pieces)
+                    if end_pos in lists_of_white:
+                        white_or_black()
+                        # pass              
                     else:
                         
                         figure_type[figure_type.index(start_pos)] = end_pos
@@ -134,9 +159,89 @@ def move_piece(start_pos, end_pos):
                             figure_type[figure_type.index(start_pos)] = end_pos
                             enemy_pieces[enemy_piece_type].remove(end_pos)
                             break
+                else:
+                    if end_pos != start_pos:
+                        white_or_black()
+                    
 
         else:
             pass
+
+        figure_horse = figure["horse"]
+        if start_pos in figure_horse:
+            if first_hod == "black":
+                if (end_pos == (start_pos[0]-2, start_pos[1]-1) or end_pos == (start_pos[0]-2, start_pos[1]+1) or 
+                    end_pos == (start_pos[0]+2, start_pos[1]-1) or end_pos == (start_pos[0]+2, start_pos[1]+1) or
+                    end_pos == (start_pos[0]-1, start_pos[1]+2) or end_pos == (start_pos[0]+1, start_pos[1]+2) or
+                    end_pos == (start_pos[0]-1, start_pos[1]-2) or end_pos == (start_pos[0]+1, start_pos[1]-2)):
+                    # print(end_pos)
+                    # print("___")
+                    # print((start_pos[0]-2, start_pos[1]-1))
+                    # print("---")
+                    # print(figure_horse)
+                    if end_pos not in black_pieces.values():
+                        # white_or_black()
+                        for enemy_piece_type in enemy_pieces:
+                            if end_pos in enemy_pieces[enemy_piece_type]:
+                                # Если да, то совершаем удар и удаляем фигуру противоположного цвета
+                                figure_horse[figure_horse.index(start_pos)] = end_pos
+                                enemy_pieces[enemy_piece_type].remove(end_pos)
+                                break
+                        else:
+                        # Если на конечной позиции нет фигуры противоположного цвета, просто совершаем ход
+                            figure_horse[figure_horse.index(start_pos)] = end_pos
+                    
+                    else:
+                        print(figure_horse)
+                        figure_horse[figure_horse.index(start_pos)] = end_pos
+
+                else:
+                    pass
+            else:
+                if (end_pos == (start_pos[0]-2, start_pos[1]-1) or end_pos == (start_pos[0]-2, start_pos[1]+1) or 
+                    end_pos == (start_pos[0]+2, start_pos[1]-1) or end_pos == (start_pos[0]+2, start_pos[1]+1) or
+                    end_pos == (start_pos[0]-1, start_pos[1]+2) or end_pos == (start_pos[0]+1, start_pos[1]+2) or
+                    end_pos == (start_pos[0]-1, start_pos[1]-2) or end_pos == (start_pos[0]+1, start_pos[1]-2)):
+                    print(end_pos)
+                    print("___")
+                    print((start_pos[0]-2, start_pos[1]-1))
+                    print("---")
+                    print(figure_horse)
+                    if end_pos not in white_pieces.values():
+                        # white_or_black()
+                        for enemy_piece_type in enemy_pieces:
+                            if end_pos in enemy_pieces[enemy_piece_type]:
+                                # Если да, то совершаем удар и удаляем фигуру противоположного цвета
+                                figure_horse[figure_horse.index(start_pos)] = end_pos
+                                enemy_pieces[enemy_piece_type].remove(end_pos)
+                                break
+                        else:
+                        # Если на конечной позиции нет фигуры противоположного цвета, просто совершаем ход
+                            figure_horse[figure_horse.index(start_pos)] = end_pos
+                    
+                    else:
+                        print(figure_horse)
+                        figure_horse[figure_horse.index(start_pos)] = end_pos
+            
+        figure_ture = figure["rook"]
+        if start_pos in figure_ture:          
+            if start_pos[0] == end_pos[0] or start_pos[1] == end_pos[1]:
+        # Проверяем, не занята ли конечная позиция фигурой противоположного цвета
+                for enemy_piece_type in enemy_pieces:
+                    if end_pos in enemy_pieces[enemy_piece_type]:
+                        # Если да, то совершаем удар и удаляем фигуру противоположного цвета
+                        figure_ture[figure_ture.index(start_pos)] = end_pos
+                        enemy_pieces[enemy_piece_type].remove(end_pos)
+                        break
+                else:
+                    # Если конечная позиция пуста или занята фигурой того же цвета, перемещаем тур
+                    
+                    figure_ture[figure_ture.index(start_pos)] = end_pos
+            else:
+                # Если тура пытаются переместить по диагонали, игнорируем ход
+                white_or_black()
+
+
 
 
 
@@ -178,6 +283,8 @@ while run_game:
     font = pygame.font.Font(None, 40)
     text = font.render(f"turn: {first_hod}", True, (0, 0, 0))
     text_rect = text.get_rect(center=(800-100, 50))
+    
+
     screen.blit(text, text_rect)
     pygame.display.flip()
     
