@@ -9,7 +9,7 @@ pygame.init()
 pygame.display.set_caption("Chess game")
 
 
-
+red = pygame.Color(255, 0, 0)
 
     
 
@@ -22,13 +22,15 @@ for color in colors:
 
 
 
-def draw_board():
+def draw_board(selected_sq):
     for i in range(Dimensions):
         for j in range(0, Dimensions):
             if (i + j) % 2 == 0:
                 color = white
             else:
                 color = grey
+            if (i, j) == selected_sq:
+                color = red
             pygame.draw.rect(screen, color, pygame.Rect(j * sq_size, i * sq_size, sq_size, sq_size))
 
 def draw_pieces():
@@ -279,7 +281,7 @@ def move_piece(start_pos, end_pos):
                         print(figure_horse)
                         white_or_black()
                         # figure_horse[figure_horse.index(start_pos)] = end_pos
-
+            
         figure_rook = figure["rook"]
         def is_path_clear(start_pos, end_pos, all_pieces):
             # Проверяем, движется ли ладья по горизонтали или вертикали
@@ -303,12 +305,30 @@ def move_piece(start_pos, end_pos):
                     if end_pos[0] == start_pos[0] or end_pos[1] == start_pos[1]:
                         # Если ход соответствует ходу туры
                         if end_pos not in black_pieces.values():
-                            all_pieces = []
-                            for piece_list in (black_pieces.values(), white_pieces.values()):
-                                all_pieces.extend(piece_list)
-                            if is_path_clear(start_pos, end_pos, all_pieces):
-                                figure_rook[figure_rook.index(start_pos)] = end_pos
+
+                            lists_of_white = []
+                            for w_value in white_pieces.values():
+                                for w in w_value:
+                                    lists_of_white.append(w)
+                            lists_of_black = []
+                            for b_value in black_pieces.values():
+                                for v in b_value:
+                                    lists_of_black.append(v)
+                            all_pieces = lists_of_white + lists_of_black
+                            if end_pos in all_pieces:
+                                for enemy_piece_type in enemy_pieces:
+                                    if end_pos in enemy_pieces[enemy_piece_type]:
+                                        # Если да, то совершаем удар и удаляем фигуру противоположного цвета
+                                        # white_or_black()
+                                        figure_rook[figure_rook.index(start_pos)] = end_pos
+                                        enemy_pieces[enemy_piece_type].remove(end_pos)
+                                        break
+                            
+                                    else:
+                                        # white_or_black()
+                                        print("no")
                             else:
+                                figure_rook[figure_rook.index(start_pos)] = end_pos
                                 print("Путь блокирован другой фигурой")
                         else:
                             print("Конечная позиция занята фигурой того же цвета")
@@ -316,18 +336,42 @@ def move_piece(start_pos, end_pos):
                     if end_pos[0] == start_pos[0] or end_pos[1] == start_pos[1]:
                         # Если ход соответствует ходу туры
                         if end_pos not in white_pieces.values():
-                            all_pieces = []
-                            for piece_list in (black_pieces.values(), white_pieces.values()):
-                                all_pieces.extend(piece_list)
-                            if is_path_clear(start_pos, end_pos, all_pieces):
-                                figure_rook[figure_rook.index(start_pos)] = end_pos
+                            lists_of_white = []
+                            for w_value in white_pieces.values():
+                                for w in w_value:
+                                    lists_of_white.append(w)
+                            lists_of_black = []
+                            for b_value in black_pieces.values():
+                                for v in b_value:
+                                    lists_of_black.append(v)
+                            all_pieces = lists_of_white + lists_of_black
+
+                            
+                            if end_pos in all_pieces:
+                                for enemy_piece_type in enemy_pieces:
+                                    if end_pos in enemy_pieces[enemy_piece_type]:
+                                        # Если да, то совершаем удар и удаляем фигуру противоположного цвета
+                                        # white_or_black()
+                                        figure_rook[figure_rook.index(start_pos)] = end_pos
+                                        enemy_pieces[enemy_piece_type].remove(end_pos)
+                                        break
+                            
+                                    else:
+                                        # white_or_black()
+                                        print("no")
                             else:
+                                figure_rook[figure_rook.index(start_pos)] = end_pos
                                 print("Путь блокирован другой фигурой")
                         else:
                             print("Конечная позиция занята фигурой того же цвета")
 
 
 
+
+
+
+
+selected = False
 run_game = True
 while run_game:
     
@@ -336,29 +380,28 @@ while run_game:
         if event.type == pygame.QUIT:
             run_game = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            
-            mouse_pos = pygame.mouse.get_pos()
-            
-            
-            col = mouse_pos[0] // sq_size
-            row = mouse_pos[1] // sq_size
-            if sqSelected == (row, col):
-                sqSelected = ()
-                PlayerClick = []
+            if not selected:
+                mouse_pos = pygame.mouse.get_pos()
+                
+                
+                col = mouse_pos[0] // sq_size
+                row = mouse_pos[1] // sq_size
+                if sqSelected == (row, col):
+                    sqSelected = ()
+                    PlayerClick = []
+                else:
+                    sqSelected = (row, col)
+                    PlayerClick.append(sqSelected)
+                    selected = True
             else:
-                sqSelected = (row, col)
-                PlayerClick.append(sqSelected)
 
-        elif event.type == pygame.MOUSEBUTTONUP:
-            end_pos = pygame.mouse.get_pos()
-            # print(mouse_pos, end_pos)
-            if mouse_pos == end_pos:
 
-                pass
-            else:
-                white_or_black()
-                # end_pos = pygame.mouse.get_pos()
-                move_chess(mouse_pos, end_pos)
+        
+                end_pos = pygame.mouse.get_pos()
+                if mouse_pos != end_pos:
+                    white_or_black()
+                    move_chess(sqSelected, end_pos)
+                selected = False  
         elif event.type == pygame.K_DOWN:
             print("hello")
             white_or_black()
@@ -366,7 +409,7 @@ while run_game:
        
 
     screen.fill((255,255,255))
-    draw_board()
+    draw_board(sqSelected)
     draw_pieces()
     # screen.fill((0,0,0))
     font = pygame.font.Font(None, 40)

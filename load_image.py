@@ -1,58 +1,76 @@
-from chess import sq_size, size
 import pygame
-def images():
-    black_pawn = pygame.image.load('photos/black/pawn.png')
-    chess_rect = black_pawn.get_rect()
-    black_pawn = pygame.transform.scale(black_pawn, (size, size))
+import sys
 
+# Инициализация Pygame
+pygame.init()
 
-    #біла пешка
-    white_pawn = pygame.image.load('photos/white/pawn (1).png')
-    white_pawn_rect = white_pawn.get_rect()
-    white_pawn = pygame.transform.scale(white_pawn, (size, size))
+# Размеры окна
+WIDTH, HEIGHT = 480, 480
 
+# Цвета
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+GRAY = (128, 128, 128)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
 
-    #чорний кінь
-    black_horse = pygame.image.load("photos/black/black_horse.png")
-    black_horse_rect = black_horse.get_rect()
-    black_horse = pygame.transform.scale(black_horse, (size, size))
+# Размеры клетки
+CELL_SIZE = WIDTH // 8
 
+# Создание окна
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption('Шахматная доска')
 
-    white_horse = pygame.image.load('photos/white/horse.png')
-    white_horse_rect = white_horse.get_rect()
-    white_horse = pygame.transform.scale(white_horse, (size, size))
+# Отрисовка шахматной доски
+def draw_board():
+    for row in range(8):
+        for col in range(8):
+            if (row + col) % 2 == 0:
+                color = WHITE
+            else:
+                color = BLACK
+            pygame.draw.rect(screen, color, (col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE))
 
+# Отрисовка персонажа
+def draw_character(color, x, y):
+    pygame.draw.rect(screen, color, (x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
 
-    black_rook = pygame.image.load('photos/black/rook.png')
-    black_rook_rect = black_rook.get_rect()
-    black_rook = pygame.transform.scale(black_rook, (size, size))
+# Основной игровой цикл
+def main():
+    red_character_pos = (0, 0)    # Начальные координаты красного персонажа
+    green_character_pos = (7, 7)  # Начальные координаты зеленого персонажа
+    selected = False              # Персонаж выбран или нет
 
-    white_rook = pygame.image.load('photos/white/rook.png')
-    white_rook_rect = white_rook.get_rect()
-    white_rook = pygame.transform.scale(white_rook, (size, size))
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if not selected:
+                    # Если персонаж не выбран, выбираем его
+                    x, y = pygame.mouse.get_pos()
+                    if red_character_pos == (x // CELL_SIZE, y // CELL_SIZE):
+                        selected = True
+                        selected_color = RED
+                    elif green_character_pos == (x // CELL_SIZE, y // CELL_SIZE):
+                        selected = True
+                        selected_color = GREEN
+                else:
+                    # Если персонаж уже выбран, перемещаем его
+                    x, y = pygame.mouse.get_pos()
+                    new_pos = x // CELL_SIZE, y // CELL_SIZE
+                    if selected_color == RED:
+                        red_character_pos = new_pos
+                    elif selected_color == GREEN:
+                        green_character_pos = new_pos
+                    selected = False
 
-    black_bishop = pygame.image.load('photos/black/bishop.png')
-    black_bishop_rect = black_bishop.get_rect()
-    black_bishop = pygame.transform.scale(black_bishop, (size, size))
+        screen.fill(GRAY)
+        draw_board()
+        draw_character(RED, *red_character_pos)
+        draw_character(GREEN, *green_character_pos)
+        pygame.display.flip()
 
-    white_bishop = pygame.image.load('photos/white/bishop.png')
-    white_bishop_rect = white_bishop.get_rect()
-    white_bishop = pygame.transform.scale(white_bishop, (size, size))
-
-
-    black_king = pygame.image.load('photos/black/king.png')
-    black_king_rect = black_king.get_rect()
-    black_king = pygame.transform.scale(black_king, (size, size))
-
-    white_king = pygame.image.load('photos/white/king.png')
-    white_king_rect = white_king.get_rect()
-    white_king = pygame.transform.scale(white_king, (size, size))
-
-
-    black_queen = pygame.image.load('photos/black/queen.png')
-    black_queen_rect = black_queen.get_rect()
-    black_queen = pygame.transform.scale(black_queen, (size, size))
-
-    white_queen = pygame.image.load('photos/white/queen.png')
-    white_queen_rect = white_queen.get_rect()
-    white_queen = pygame.transform.scale(white_queen, (size, size))
+if __name__ == '__main__':
+    main()
