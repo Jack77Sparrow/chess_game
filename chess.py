@@ -282,30 +282,56 @@ def move_piece(start_pos, end_pos):
                         white_or_black()
                         # figure_horse[figure_horse.index(start_pos)] = end_pos
             
-        figure_rook = figure["rook"]
-        def is_path_clear(start_pos, end_pos, all_pieces):
-            # Проверяем, движется ли ладья по горизонтали или вертикали
-            if start_pos[0] == end_pos[0]:  # Проверяем вертикальное движение
-                start_row, end_row = min(start_pos[1], end_pos[1]), max(start_pos[1], end_pos[1])
-                for row in range(start_row + 1, end_row):
-                    if (start_pos[0], row) in all_pieces:
-                        return False  # На пути есть фигура
-            elif start_pos[1] == end_pos[1]:  # Проверяем горизонтальное движение
-                start_col, end_col = min(start_pos[0], end_pos[0]), max(start_pos[0], end_pos[0])
-                for col in range(start_col + 1, end_col):
-                    if (col, start_pos[1]) in all_pieces:
-                        return False  # На пути есть фигура
-            else:
-                # Ладья движется не по вертикали и не по горизонтали, это недопустимый ход для ладьи
-                return False
+        
+        # def is_path_clear(start_pos, end_pos, all_pieces):
+        #     # Проверяем, движется ли ладья по горизонтали или вертикали
+        #     if start_pos[0] == end_pos[0]:  # Проверяем вертикальное движение
+        #         start_row, end_row = min(start_pos[1], end_pos[1]), max(start_pos[1], end_pos[1])
+        #         for row in range(start_row + 1, end_row):
+        #             if (start_pos[0], row) in all_pieces:
+        #                 return False  # На пути есть фигура
+        #     elif start_pos[1] == end_pos[1]:  # Проверяем горизонтальное движение
+        #         start_col, end_col = min(start_pos[0], end_pos[0]), max(start_pos[0], end_pos[0])
+        #         for col in range(start_col + 1, end_col):
+        #             if (col, start_pos[1]) in all_pieces:
+        #                 return False  # На пути есть фигура
+        #     else:
+        #         # Ладья движется не по вертикали и не по горизонтали, это недопустимый ход для ладьи
+        #         return False
             
-            return True  # Если препятствий нет на пути, возвращаем True
+        #     return True  # Если препятствий нет на пути, возвращаем True
+        figure_rook = figure["rook"]
         if start_pos in figure_rook:
-                if first_hod == "black":
+            if first_hod == "black":
+                
+                if end_pos == (7, 4) and (7, 7) in figure_rook:
+                    # короткая рокировка для белых
+                    if (7, 5) not in white_pieces.values() and (7, 6) not in white_pieces.values():
+                        if (7, 5) not in black_pieces.values() and (7, 6) not in black_pieces.values():
+                            figure["king"][figure["king"].index((7, 4))] = (7, 7)
+                            figure["rook"][figure["rook"].index((7, 7))] = (7, 4)
+                elif end_pos == (7, 2) and (7, 0) in figure_rook:  # длинная рокировка для белых
+                    
+                    if (7, 3) not in white_pieces.values() and (7, 2) not in white_pieces.values() and (7, 1) not in white_pieces.values():
+                        if (7, 3) not in black_pieces.values() and (7, 2) not in black_pieces.values():
+                            print((7,2), (7,3))
+                            figure["king"][figure["king"].index((7, 4))] = (7, 2)
+                            figure["rook"][figure["rook"].index((7, 0))] = (7, 4)
+                # if end_pos == (0, 6) and (0, 7) in figure_rook:  # короткая рокировка для черных
+                #     print("black")
+                #     if (0, 5) not in black_pieces.values() and (0, 6) not in black_pieces.values():
+                #         if (0, 5) not in white_pieces.values() and (0, 6) not in white_pieces.values():
+                #             figure["king"][figure["king"].index((0, 4))] = (0, 6)
+                #             figure["rook"][figure["rook"].index((0, 7))] = (0, 5)
+                # elif end_pos == (0, 2) and (0, 0) in figure_rook:  # длинная рокировка для черных
+                #     print("black2")
+                #     if (0, 3) not in black_pieces.values() and (0, 2) not in black_pieces.values() and (0, 1) not in black_pieces.values():
+                #         if (0, 3) not in white_pieces.values() and (0, 2) not in white_pieces.values():
+                #             figure["king"][figure["king"].index((0, 4))] = (0, 2)
+                #             figure["rook"][figure["rook"].index((0, 0))] = (0, 3)
+                else:
                     if end_pos[0] == start_pos[0] or end_pos[1] == start_pos[1]:
-                        # Если ход соответствует ходу туры
                         if end_pos not in black_pieces.values():
-
                             lists_of_white = []
                             for w_value in white_pieces.values():
                                 for w in w_value:
@@ -315,26 +341,48 @@ def move_piece(start_pos, end_pos):
                                 for v in b_value:
                                     lists_of_black.append(v)
                             all_pieces = lists_of_white + lists_of_black
+
                             if end_pos in all_pieces:
                                 for enemy_piece_type in enemy_pieces:
                                     if end_pos in enemy_pieces[enemy_piece_type]:
-                                        # Если да, то совершаем удар и удаляем фигуру противоположного цвета
-                                        # white_or_black()
                                         figure_rook[figure_rook.index(start_pos)] = end_pos
                                         enemy_pieces[enemy_piece_type].remove(end_pos)
                                         break
-                            
-                                    else:
-                                        # white_or_black()
-                                        print("no")
+                                else:
+                                    print("no")
                             else:
                                 figure_rook[figure_rook.index(start_pos)] = end_pos
                                 print("Путь блокирован другой фигурой")
                         else:
                             print("Конечная позиция занята фигурой того же цвета")
+            else:
+                if end_pos == (0, 4) and (0, 7) in figure_rook:  # короткая рокировка для черных
+                    print("black")
+                    if (0, 5) not in black_pieces.values() and (0, 6) not in black_pieces.values():
+                        if (0, 5) not in white_pieces.values() and (0, 6) not in white_pieces.values():
+                            figure["king"][figure["king"].index((0, 4))] = (0, 7)
+                            figure["rook"][figure["rook"].index((0, 7))] = (0, 4)
+                elif end_pos == (0, 2) and (0, 0) in figure_rook:  # длинная рокировка для черных
+                    print("black2")
+                    if (0, 3) not in black_pieces.values() and (0, 2) not in black_pieces.values() and (0, 1) not in black_pieces.values():
+                        if (0, 3) not in white_pieces.values() and (0, 2) not in white_pieces.values():
+                            
+                            figure["king"][figure["king"].index((0, 4))] = (0, 2)
+                            figure["rook"][figure["rook"].index((0, 0))] = (0, 4)
+                # if end_pos == (7, 6) and (7, 7) in figure_rook:
+                #     print("white")  # короткая рокировка для белых
+                #     if (7, 5) not in white_pieces.values() and (7, 6) not in white_pieces.values():
+                #         if (7, 5) not in black_pieces.values() and (7, 6) not in black_pieces.values():
+                #             figure["king"][figure["king"].index((7, 4))] = (7, 6)
+                #             figure["rook"][figure["rook"].index((7, 7))] = (7, 5)
+                # elif end_pos == (7, 2) and (7, 0) in figure_rook:  # длинная рокировка для белых
+                #     print("white2")
+                #     if (7, 3) not in white_pieces.values() and (7, 2) not in white_pieces.values() and (7, 1) not in white_pieces.values():
+                #         if (7, 3) not in black_pieces.values() and (7, 2) not in black_pieces.values():
+                #             figure["king"][figure["king"].index((7, 4))] = (7, 2)
+                #             figure["rook"][figure["rook"].index((7, 0))] = (7, 3)
                 else:
                     if end_pos[0] == start_pos[0] or end_pos[1] == start_pos[1]:
-                        # Если ход соответствует ходу туры
                         if end_pos not in white_pieces.values():
                             lists_of_white = []
                             for w_value in white_pieces.values():
@@ -346,29 +394,198 @@ def move_piece(start_pos, end_pos):
                                     lists_of_black.append(v)
                             all_pieces = lists_of_white + lists_of_black
 
-                            
                             if end_pos in all_pieces:
                                 for enemy_piece_type in enemy_pieces:
                                     if end_pos in enemy_pieces[enemy_piece_type]:
-                                        # Если да, то совершаем удар и удаляем фигуру противоположного цвета
-                                        # white_or_black()
                                         figure_rook[figure_rook.index(start_pos)] = end_pos
                                         enemy_pieces[enemy_piece_type].remove(end_pos)
                                         break
-                            
-                                    else:
-                                        # white_or_black()
-                                        print("no")
+                                else:
+                                    print("no")
                             else:
                                 figure_rook[figure_rook.index(start_pos)] = end_pos
                                 print("Путь блокирован другой фигурой")
                         else:
                             print("Конечная позиция занята фигурой того же цвета")
 
+        figure_bishop = figure["bishop"]
 
+        if start_pos in figure_bishop:
+            if first_hod == "black":
 
+                if abs(end_pos[0] - start_pos[0]) == abs(end_pos[1] - start_pos[1]):
+                    if end_pos not in black_pieces.values():
+                        lists_of_white = []
+                        for w_value in white_pieces.values():
+                            for w in w_value:
+                                lists_of_white.append(w)
+                        lists_of_black = []
+                        for b_value in black_pieces.values():
+                            for v in b_value:
+                                lists_of_black.append(v)
+                        all_pieces = lists_of_black + lists_of_white
+                        if end_pos in all_pieces:
+                            for enemy_piece_type in enemy_pieces:
+                                if end_pos in enemy_pieces[enemy_piece_type]:
+                                    # Если да, то совершаем удар и удаляем фигуру противоположного цвета
+                                    # white_or_black()
+                                    figure_bishop[figure_bishop.index(start_pos)] = end_pos
+                                    enemy_pieces[enemy_piece_type].remove(end_pos)
+                                    break
+                        
+                                else:
+                                    # white_or_black()
+                                    print("no")
+                        else:
 
+                    
+                            figure_bishop[figure_bishop.index(start_pos)] = end_pos
+                    
+                else:
+                    pass
 
+            else:
+                if abs(end_pos[0] - start_pos[0]) == abs(end_pos[1] - start_pos[1]):
+                    if end_pos not in white_pieces.values():
+                        lists_of_white = []
+                        for w_value in white_pieces.values():
+                            for w in w_value:
+                                lists_of_white.append(w)
+                        lists_of_black = []
+                        for b_value in black_pieces.values():
+                            for v in b_value:
+                                lists_of_black.append(v)
+
+                        all_pieces = lists_of_black + lists_of_white
+                        if end_pos in all_pieces:
+                            for enemy_piece_type in enemy_pieces:
+                                if end_pos in enemy_pieces[enemy_piece_type]:
+                                    figure_bishop[figure_bishop.index(start_pos)] = end_pos
+                                    enemy_pieces[enemy_piece_type].remove(end_pos)
+                                    break
+                                    
+                                else: pass
+                        
+                        else:
+                            figure_bishop[figure_bishop.index(start_pos)] = end_pos
+
+        figure_queen = figure["queen"]
+        if start_pos in figure_queen:
+            if first_hod == "black":
+                if abs(end_pos[0]-start_pos[0]) == abs(end_pos[1]-start_pos[1])or\
+                    (end_pos[0] == start_pos[0] or end_pos[1] == start_pos[1]):
+                    if end_pos not in black_pieces.values():
+                        lists_of_white = []
+                        for w_value in white_pieces.values():
+                            for w in w_value:
+                                lists_of_white.append(w)
+                        lists_of_black = []
+                        for b_value in black_pieces.values():
+                            for v in b_value:
+                                lists_of_black.append(v)
+
+                        all_pieces = lists_of_black + lists_of_white
+
+                        if end_pos in all_pieces:
+                            for enemy_piece_type in enemy_pieces:
+                                if end_pos in enemy_pieces[enemy_piece_type]:
+
+                                    figure_queen[figure_queen.index(start_pos)] = end_pos
+                                    enemy_pieces[enemy_piece_type].remove(end_pos)
+                                    break
+                                else:
+                                    pass
+
+                        else:
+                            figure_queen[figure_queen.index(start_pos)] = end_pos
+                        
+            else:
+                if abs(end_pos[0]-start_pos[0]) == abs(end_pos[1]-start_pos[1])or\
+                    (end_pos[0] == start_pos[0] or end_pos[1] == start_pos[1]):
+                    if end_pos not in black_pieces.values():
+                        lists_of_white = []
+                        for w_value in white_pieces.values():
+                            for w in w_value:
+                                lists_of_white.append(w)
+                        lists_of_black = []
+                        for b_value in black_pieces.values():
+                            for v in b_value:
+                                lists_of_black.append(v)
+
+                        all_pieces = lists_of_black + lists_of_white
+                        if end_pos in all_pieces:
+                            for enemy_piece_type in enemy_pieces:
+                                if end_pos in enemy_pieces[enemy_piece_type]:
+
+                                    figure_queen[figure_queen.index(start_pos)] = end_pos
+                                    enemy_pieces[enemy_piece_type].remove(end_pos)
+                                else:
+                                    pass
+                        
+                        else:
+                            figure_queen[figure_queen.index(start_pos)] = end_pos
+                else:
+                    pass
+        
+        figure_king = figure["king"]
+
+        if start_pos in figure_king:
+            if first_hod == "black":
+                print(end_pos, (start_pos[0]-1, start_pos[1]))
+                if (end_pos == (start_pos[0]-1, start_pos[1]) or end_pos == (start_pos[0]-1, start_pos[1]-1) or\
+                     (end_pos == (start_pos[0]-1, start_pos[1]+1) or end_pos == (start_pos[0]+1, start_pos[1])) or\
+                        end_pos == (start_pos[0], start_pos[1]-1) or end_pos == (start_pos[0], start_pos[1]+1) or \
+                            end_pos == (start_pos[0]+1, start_pos[1]-1) or end_pos == (start_pos[0]+1, start_pos[1]+1)):
+                    print("black")
+                    if end_pos not in black_pieces.values():
+                        lists_of_white = []
+                        for w_value in white_pieces.values():
+                            for w in w_value:
+                                lists_of_white.append(w)
+                        lists_of_black = []
+                        for b_value in black_pieces.values():
+                            for v in b_value:
+                                lists_of_black.append(v)
+
+                        all_pieces = lists_of_black + lists_of_white
+
+                        if end_pos in all_pieces:
+                            for enemy_piece_type in enemy_pieces:
+                                if end_pos in enemy_pieces[enemy_piece_type]:
+
+                                    figure_king[figure_king.index(start_pos)] = end_pos
+                                    enemy_pieces[enemy_piece_type].remove(end_pos)
+                                else:
+                                    pass
+                        else:
+                            figure_king[figure_king.index(start_pos)] = end_pos
+
+            else:
+                if abs(end_pos[0] - start_pos[0]) <= 1 and abs(end_pos[1] - start_pos[1]) <= 1:
+                    print("white")
+                    if end_pos not in black_pieces.values():
+                        lists_of_white = []
+                        for w_value in white_pieces.values():
+                            for w in w_value:
+                                lists_of_white.append(w)
+                        lists_of_black = []
+                        for b_value in black_pieces.values():
+                            for v in b_value:
+                                lists_of_black.append(v)
+
+                        all_pieces = lists_of_black + lists_of_white
+                        if end_pos in all_pieces:
+                            for enemy_piece_type in enemy_pieces:
+                                if end_pos in enemy_pieces[enemy_piece_type]:
+                                    
+                                    figure_king[figure_king.index(start_pos)] = end_pos
+                                    enemy_pieces[enemy_piece_type].remove(end_pos)
+
+                                else: pass
+                            
+                        else:
+                            figure_king[figure_king.index(start_pos)] = end_pos
+                else: pass
 
 
 selected = False
