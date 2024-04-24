@@ -2,6 +2,7 @@ import pygame
 import sys
 import os
 from const import *
+from figure import text
 
 
 pygame.init()
@@ -85,10 +86,26 @@ def move_chess(event, end_pos):
         sqSelected = ()
         PlayerClick = []
 
+def compare_list():
+    global black_pieces, white_pieces
+    all_pieces = []
+    
+    for b_value in black_pieces.values():
+        for v in b_value:
+            all_pieces.append(v)
+    # print(black_pieces)
+    
+    for w_value in white_pieces.values():
+        for w in w_value:
+            all_pieces.append(w)
+    return all_pieces
+
+
 def move_piece(start_pos, end_pos):
     global white_pieces, black_pieces, first_hod
     global text, text_rect
     global lists_of_black, lists_of_white
+    
     if first_hod == "black":
         figure = white_pieces
         enemy_pieces = black_pieces
@@ -108,17 +125,18 @@ def move_piece(start_pos, end_pos):
 
                 if start_pos[0] == 6 and end_pos == (start_pos[0]-2, start_pos[1]) or end_pos == (start_pos[0]-1, start_pos[1]):
                     
-                    lists_of_black = []
-                    for b_value in black_pieces.values():
-                        for v in b_value:
-                            lists_of_black.append(v)
-                    # print(black_pieces)
-                    lists_of_white = []
-                    for w_value in white_pieces.values():
-                        for w in w_value:
-                            lists_of_white.append(w)
+                    # lists_of_black = []
+                    # for b_value in black_pieces.values():
+                    #     for v in b_value:
+                    #         lists_of_black.append(v)
+                    # # print(black_pieces)
+                    # lists_of_white = []
+                    # for w_value in white_pieces.values():
+                    #     for w in w_value:
+                    #         lists_of_white.append(w)
+                    all_pieces = compare_list()
                     # print(lists_of_black)
-                    if end_pos in lists_of_black + lists_of_white:
+                    if end_pos in all_pieces:
                         white_or_black()
                         # print("yes")
                         
@@ -142,17 +160,10 @@ def move_piece(start_pos, end_pos):
                 
                 
                 if start_pos[0] == 1 and end_pos == (start_pos[0]+2, start_pos[1]) or end_pos == (start_pos[0]+1, start_pos[1]):
-                    lists_of_white = []
-                    for w_value in white_pieces.values():
-                        for w in w_value:
-                            lists_of_white.append(w)
-                    lists_of_black = []
-                    for b_value in black_pieces.values():
-                        for v in b_value:
-                            lists_of_black.append(v)
+                    all_pieces = compare_list()
                     # print(lists_of_white)
                     
-                    if end_pos in lists_of_white + lists_of_black:
+                    if end_pos in all_pieces:
                         white_or_black()
                         # pass              
                     else:
@@ -192,15 +203,8 @@ def move_piece(start_pos, end_pos):
                     
                     if end_pos not in black_pieces.values():
                         
-                        lists_of_white = []
-                        for w_value in white_pieces.values():
-                            for w in w_value:
-                                lists_of_white.append(w)
-                        lists_of_black = []
-                        for b_value in black_pieces.values():
-                            for v in b_value:
-                                lists_of_black.append(v)
-                        if end_pos in lists_of_black+lists_of_white:
+                        all_pieces = compare_list()
+                        if end_pos in all_pieces:
                             # await asyncio.sleep(0.5)
                             
                             for enemy_piece_type in enemy_pieces:
@@ -244,16 +248,9 @@ def move_piece(start_pos, end_pos):
                         
                         
 
-                        lists_of_white = []
-                        for w_value in white_pieces.values():
-                            for w in w_value:
-                                lists_of_white.append(w)
-                        lists_of_black = []
-                        for b_value in black_pieces.values():
-                            for v in b_value:
-                                lists_of_black.append(v)
+                        all_pieces = compare_list()
                         # white_or_black()
-                        if end_pos in lists_of_white + lists_of_black:
+                        if end_pos in all_pieces:
                             for enemy_piece_type in enemy_pieces:
                                 if end_pos in enemy_pieces[enemy_piece_type]:
                                     # Если да, то совершаем удар и удаляем фигуру противоположного цвета
@@ -308,15 +305,15 @@ def move_piece(start_pos, end_pos):
                     # короткая рокировка для белых
                     if (7, 5) not in white_pieces.values() and (7, 6) not in white_pieces.values():
                         if (7, 5) not in black_pieces.values() and (7, 6) not in black_pieces.values():
-                            figure["king"][figure["king"].index((7, 4))] = (7, 7)
-                            figure["rook"][figure["rook"].index((7, 7))] = (7, 4)
-                elif end_pos == (7, 2) and (7, 0) in figure_rook:  # длинная рокировка для белых
+                            figure["king"][figure["king"].index((7, 4))] = (7, 6)
+                            figure["rook"][figure["rook"].index((7, 7))] = (7, 5)
+                # elif end_pos == (7, 2) and (7, 0) in figure_rook:  # длинная рокировка для белых
                     
-                    if (7, 3) not in white_pieces.values() and (7, 2) not in white_pieces.values() and (7, 1) not in white_pieces.values():
-                        if (7, 3) not in black_pieces.values() and (7, 2) not in black_pieces.values():
-                            print((7,2), (7,3))
-                            figure["king"][figure["king"].index((7, 4))] = (7, 2)
-                            figure["rook"][figure["rook"].index((7, 0))] = (7, 4)
+                #     if (7, 3) not in white_pieces.values() and (7, 2) not in white_pieces.values() and (7, 1) not in white_pieces.values():
+                #         if (7, 3) not in black_pieces.values() and (7, 2) not in black_pieces.values():
+                #             print((7,2), (7,3))
+                #             figure["king"][figure["king"].index((7, 4))] = (7, 2)
+                #             figure["rook"][figure["rook"].index((7, 0))] = (7, 4)
                 # if end_pos == (0, 6) and (0, 7) in figure_rook:  # короткая рокировка для черных
                 #     print("black")
                 #     if (0, 5) not in black_pieces.values() and (0, 6) not in black_pieces.values():
@@ -332,15 +329,8 @@ def move_piece(start_pos, end_pos):
                 else:
                     if end_pos[0] == start_pos[0] or end_pos[1] == start_pos[1]:
                         if end_pos not in black_pieces.values():
-                            lists_of_white = []
-                            for w_value in white_pieces.values():
-                                for w in w_value:
-                                    lists_of_white.append(w)
-                            lists_of_black = []
-                            for b_value in black_pieces.values():
-                                for v in b_value:
-                                    lists_of_black.append(v)
-                            all_pieces = lists_of_white + lists_of_black
+                            all_pieces = compare_list()
+
 
                             if end_pos in all_pieces:
                                 for enemy_piece_type in enemy_pieces:
@@ -360,15 +350,15 @@ def move_piece(start_pos, end_pos):
                     print("black")
                     if (0, 5) not in black_pieces.values() and (0, 6) not in black_pieces.values():
                         if (0, 5) not in white_pieces.values() and (0, 6) not in white_pieces.values():
-                            figure["king"][figure["king"].index((0, 4))] = (0, 7)
-                            figure["rook"][figure["rook"].index((0, 7))] = (0, 4)
-                elif end_pos == (0, 2) and (0, 0) in figure_rook:  # длинная рокировка для черных
-                    print("black2")
-                    if (0, 3) not in black_pieces.values() and (0, 2) not in black_pieces.values() and (0, 1) not in black_pieces.values():
-                        if (0, 3) not in white_pieces.values() and (0, 2) not in white_pieces.values():
+                            figure["king"][figure["king"].index((0, 4))] = (0, 6)
+                            figure["rook"][figure["rook"].index((0, 7))] = (0, 5)
+                # elif end_pos == (0, 2) and (0, 0) in figure_rook:  # длинная рокировка для черных
+                #     print("black2")
+                #     if (0, 3) not in black_pieces.values() and (0, 2) not in black_pieces.values() and (0, 1) not in black_pieces.values():
+                #         if (0, 3) not in white_pieces.values() and (0, 2) not in white_pieces.values():
                             
-                            figure["king"][figure["king"].index((0, 4))] = (0, 2)
-                            figure["rook"][figure["rook"].index((0, 0))] = (0, 4)
+                #             figure["king"][figure["king"].index((0, 4))] = (0, 2)
+                #             figure["rook"][figure["rook"].index((0, 0))] = (0, 4)
                 # if end_pos == (7, 6) and (7, 7) in figure_rook:
                 #     print("white")  # короткая рокировка для белых
                 #     if (7, 5) not in white_pieces.values() and (7, 6) not in white_pieces.values():
@@ -384,15 +374,8 @@ def move_piece(start_pos, end_pos):
                 else:
                     if end_pos[0] == start_pos[0] or end_pos[1] == start_pos[1]:
                         if end_pos not in white_pieces.values():
-                            lists_of_white = []
-                            for w_value in white_pieces.values():
-                                for w in w_value:
-                                    lists_of_white.append(w)
-                            lists_of_black = []
-                            for b_value in black_pieces.values():
-                                for v in b_value:
-                                    lists_of_black.append(v)
-                            all_pieces = lists_of_white + lists_of_black
+                            all_pieces = compare_list()
+                            
 
                             if end_pos in all_pieces:
                                 for enemy_piece_type in enemy_pieces:
@@ -415,15 +398,8 @@ def move_piece(start_pos, end_pos):
 
                 if abs(end_pos[0] - start_pos[0]) == abs(end_pos[1] - start_pos[1]):
                     if end_pos not in black_pieces.values():
-                        lists_of_white = []
-                        for w_value in white_pieces.values():
-                            for w in w_value:
-                                lists_of_white.append(w)
-                        lists_of_black = []
-                        for b_value in black_pieces.values():
-                            for v in b_value:
-                                lists_of_black.append(v)
-                        all_pieces = lists_of_black + lists_of_white
+                        all_pieces = compare_list()
+
                         if end_pos in all_pieces:
                             for enemy_piece_type in enemy_pieces:
                                 if end_pos in enemy_pieces[enemy_piece_type]:
@@ -447,16 +423,7 @@ def move_piece(start_pos, end_pos):
             else:
                 if abs(end_pos[0] - start_pos[0]) == abs(end_pos[1] - start_pos[1]):
                     if end_pos not in white_pieces.values():
-                        lists_of_white = []
-                        for w_value in white_pieces.values():
-                            for w in w_value:
-                                lists_of_white.append(w)
-                        lists_of_black = []
-                        for b_value in black_pieces.values():
-                            for v in b_value:
-                                lists_of_black.append(v)
-
-                        all_pieces = lists_of_black + lists_of_white
+                        all_pieces = compare_list()
                         if end_pos in all_pieces:
                             for enemy_piece_type in enemy_pieces:
                                 if end_pos in enemy_pieces[enemy_piece_type]:
@@ -475,16 +442,7 @@ def move_piece(start_pos, end_pos):
                 if abs(end_pos[0]-start_pos[0]) == abs(end_pos[1]-start_pos[1])or\
                     (end_pos[0] == start_pos[0] or end_pos[1] == start_pos[1]):
                     if end_pos not in black_pieces.values():
-                        lists_of_white = []
-                        for w_value in white_pieces.values():
-                            for w in w_value:
-                                lists_of_white.append(w)
-                        lists_of_black = []
-                        for b_value in black_pieces.values():
-                            for v in b_value:
-                                lists_of_black.append(v)
-
-                        all_pieces = lists_of_black + lists_of_white
+                        all_pieces = compare_list()
 
                         if end_pos in all_pieces:
                             for enemy_piece_type in enemy_pieces:
@@ -503,16 +461,7 @@ def move_piece(start_pos, end_pos):
                 if abs(end_pos[0]-start_pos[0]) == abs(end_pos[1]-start_pos[1])or\
                     (end_pos[0] == start_pos[0] or end_pos[1] == start_pos[1]):
                     if end_pos not in black_pieces.values():
-                        lists_of_white = []
-                        for w_value in white_pieces.values():
-                            for w in w_value:
-                                lists_of_white.append(w)
-                        lists_of_black = []
-                        for b_value in black_pieces.values():
-                            for v in b_value:
-                                lists_of_black.append(v)
-
-                        all_pieces = lists_of_black + lists_of_white
+                        all_pieces = compare_list()
                         if end_pos in all_pieces:
                             for enemy_piece_type in enemy_pieces:
                                 if end_pos in enemy_pieces[enemy_piece_type]:
@@ -538,16 +487,7 @@ def move_piece(start_pos, end_pos):
                             end_pos == (start_pos[0]+1, start_pos[1]-1) or end_pos == (start_pos[0]+1, start_pos[1]+1)):
                     print("black")
                     if end_pos not in black_pieces.values():
-                        lists_of_white = []
-                        for w_value in white_pieces.values():
-                            for w in w_value:
-                                lists_of_white.append(w)
-                        lists_of_black = []
-                        for b_value in black_pieces.values():
-                            for v in b_value:
-                                lists_of_black.append(v)
-
-                        all_pieces = lists_of_black + lists_of_white
+                        all_pieces = compare_list()
 
                         if end_pos in all_pieces:
                             for enemy_piece_type in enemy_pieces:
@@ -564,16 +504,7 @@ def move_piece(start_pos, end_pos):
                 if abs(end_pos[0] - start_pos[0]) <= 1 and abs(end_pos[1] - start_pos[1]) <= 1:
                     print("white")
                     if end_pos not in black_pieces.values():
-                        lists_of_white = []
-                        for w_value in white_pieces.values():
-                            for w in w_value:
-                                lists_of_white.append(w)
-                        lists_of_black = []
-                        for b_value in black_pieces.values():
-                            for v in b_value:
-                                lists_of_black.append(v)
-
-                        all_pieces = lists_of_black + lists_of_white
+                        all_pieces = compare_list()
                         if end_pos in all_pieces:
                             for enemy_piece_type in enemy_pieces:
                                 if end_pos in enemy_pieces[enemy_piece_type]:
@@ -587,55 +518,60 @@ def move_piece(start_pos, end_pos):
                             figure_king[figure_king.index(start_pos)] = end_pos
                 else: pass
 
+lis = ["start", "START", "Start", "начать", "старт"]
 
-selected = False
-run_game = True
-while run_game:
-    
-    for event in pygame.event.get():
+if text in lis:
+    selected = False
+    run_game = True
+    while run_game:
+        
+        for event in pygame.event.get():
 
-        if event.type == pygame.QUIT:
-            run_game = False
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            if not selected:
-                mouse_pos = pygame.mouse.get_pos()
-                
-                
-                col = mouse_pos[0] // sq_size
-                row = mouse_pos[1] // sq_size
-                if sqSelected == (row, col):
-                    sqSelected = ()
-                    PlayerClick = []
+            if event.type == pygame.QUIT:
+                run_game = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if not selected:
+                    mouse_pos = pygame.mouse.get_pos()
+                    
+                    
+                    col = mouse_pos[0] // sq_size
+                    row = mouse_pos[1] // sq_size
+                    if sqSelected == (row, col):
+                        sqSelected = ()
+                        PlayerClick = []
+                    else:
+                        sqSelected = (row, col)
+                        PlayerClick.append(sqSelected)
+                        selected = True
                 else:
-                    sqSelected = (row, col)
-                    PlayerClick.append(sqSelected)
-                    selected = True
-            else:
 
+
+            
+                    end_pos = pygame.mouse.get_pos()
+                    if mouse_pos != end_pos:
+                        white_or_black()
+                        move_chess(sqSelected, end_pos)
+                    selected = False  
+            elif event.type == pygame.K_DOWN:
+                print("hello")
+                white_or_black()
 
         
-                end_pos = pygame.mouse.get_pos()
-                if mouse_pos != end_pos:
-                    white_or_black()
-                    move_chess(sqSelected, end_pos)
-                selected = False  
-        elif event.type == pygame.K_DOWN:
-            print("hello")
-            white_or_black()
 
-       
+        screen.fill((255,255,255))
+        draw_board(sqSelected)
+        draw_pieces()
+        # screen.fill((0,0,0))
+        font = pygame.font.Font(None, 40)
+        text = font.render(f"turn: {first_hod}", True, (0, 0, 0))
+        text_rect = text.get_rect(center=(800-100, 50))
+        
 
-    screen.fill((255,255,255))
-    draw_board(sqSelected)
-    draw_pieces()
-    # screen.fill((0,0,0))
-    font = pygame.font.Font(None, 40)
-    text = font.render(f"turn: {first_hod}", True, (0, 0, 0))
-    text_rect = text.get_rect(center=(800-100, 50))
-    
+        screen.blit(text, text_rect)
+        pygame.display.flip()
+        
+    pygame.quit()
+    sys.exit()
 
-    screen.blit(text, text_rect)
-    pygame.display.flip()
-    
-pygame.quit()
-sys.exit()
+else:
+    print("i dont understand you")

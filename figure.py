@@ -18,7 +18,7 @@ stream = audio.open(format=FORMAT, channels=CHANNELS,
                     rate=RATE, input=True,
                     frames_per_buffer=CHUNK)
 
-print("Запись...")
+print("Запис...")
 
 frames = []
 
@@ -27,7 +27,7 @@ for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
     data = stream.read(CHUNK)
     frames.append(data)
 
-print("Запись завершена.")
+print("Запис завершена.")
 
 # Останавливаем поток и закрываем объект PyAudio
 stream.stop_stream()
@@ -41,7 +41,7 @@ with wave.open(WAVE_OUTPUT_FILENAME, 'wb') as wf:
     wf.setframerate(RATE)
     wf.writeframes(b''.join(frames))
 
-print("Запись сохранена в", WAVE_OUTPUT_FILENAME)
+print("Запис збережено в", WAVE_OUTPUT_FILENAME)
 
 # Создаем объект Recognizer
 recognizer = sr.Recognizer()
@@ -53,9 +53,11 @@ with sr.AudioFile(WAVE_OUTPUT_FILENAME) as source:
     
     try:
         # Используем Google Web Speech API для распознавания речи
-        text = recognizer.recognize_google(audio_data, language="ru-RU")
-        print("Вы сказали:", text)
+        text = recognizer.recognize_google(audio_data, language="en-EN")
+
+        print("Ви сказали:", text)
     except sr.UnknownValueError:
-        print("Речь не распознана")
+        print("мова не розпізнана")
     except sr.RequestError as e:
-        print("Ошибка запроса к сервису распознавания: {0}".format(e))
+        print("помилка запроса до сервісу розпізнавання: {0}".format(e))
+
