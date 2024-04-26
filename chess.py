@@ -2,12 +2,39 @@ import pygame
 import sys
 import os
 from const import *
-from figure import text
-
+from figure import record_audio_and_recognize
 
 pygame.init()
 
 pygame.display.set_caption("Chess game")
+
+
+#initialised a values
+image_folder = 'photos'
+
+pieces = ['pawn', 'horse', 'rook', 'bishop', 'king', 'queen']
+
+colors = ['white','black']
+
+black_pieces = {
+    'queen': [(0, 3)],
+    'king':[(0, 4)], 
+    "bishop" :[(0, 2), (0, 5)], 
+    "rook": [(0,0), (0, 7)],
+    "horse":[(0, 1), (0, 6)],
+    "pawn":[(1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7)]
+}
+
+white_pieces = {
+    'queen': [(7, 3)],
+    'king': [(7, 4)], 
+    "bishop": [(7, 2), (7, 5)], 
+    "rook": [(7, 0), (7, 7)],
+    "horse": [(7, 1), (7, 6)],
+    "pawn": [(6, 0), (6, 1), (6, 2), (6, 3), (6, 4), (6, 5), (6, 6), (6, 7)]
+}
+
+
 
 
 red = pygame.Color(255, 0, 0)
@@ -33,6 +60,16 @@ def draw_board(selected_sq):
             if (i, j) == selected_sq:
                 color = red
             pygame.draw.rect(screen, color, pygame.Rect(j * sq_size, i * sq_size, sq_size, sq_size))
+            if i == 0:
+                font = pygame.font.Font(None, 36)
+                text_surface = font.render(chr(97 + j), True, black)  # Використання chr(97 + j) для отримання a, b, c
+                screen.blit(text_surface, (j * sq_size + 10, i * sq_size + 10))
+            # Додати позначення для рядків (1, 2, 3)
+            if j == 0:
+                font = pygame.font.Font(None, 36)
+                text_surface = font.render(str(i + 1), True, black)  # Використання str(i + 1) для отримання 1, 2, 3
+                screen.blit(text_surface, (j * sq_size + 10, i * sq_size + 10))
+
 
 def draw_pieces():
     for color in colors:
@@ -62,17 +99,18 @@ class InvalidMoveError(Exception):
 
 def move_chess(event, end_pos):
     global sqSelected, PlayerClick, white_pieces, black_pieces, first_hod
-    
+    #start position
     row, col = event
     sq_row = row // sq_size
     sq_col = col // sq_size
-    pos_g = (sq_col, sq_row)
-    # print(pos_g)
+
+    #end position
     end_row, end_col = end_pos
     esq_row = end_row // sq_size
     esq_col = end_col // sq_size
     new_pos = (esq_col, esq_row)
-    # print(new_pos)
+
+    
 
     
     if len(PlayerClick) == 0:  # Если это первый клик
@@ -113,7 +151,7 @@ def move_piece(start_pos, end_pos):
         figure = black_pieces
         enemy_pieces = white_pieces
         
-    for type_piece in figure:
+    for _ in figure:
 
         figure_type = figure["pawn"]
         if start_pos in figure_type:
@@ -520,7 +558,7 @@ def move_piece(start_pos, end_pos):
 
 lis = ["start", "START", "Start", "начать", "старт"]
 
-if text in lis:
+if "start" in lis:
     selected = False
     run_game = True
     while run_game:
@@ -534,24 +572,37 @@ if text in lis:
                     mouse_pos = pygame.mouse.get_pos()
                     
                     
-                    col = mouse_pos[0] // sq_size
-                    row = mouse_pos[1] // sq_size
-                    if sqSelected == (row, col):
+                    mcol = mouse_pos[0] // sq_size
+                    mrow = mouse_pos[1] // sq_size
+                    if sqSelected == (mrow, mcol):
                         sqSelected = ()
                         PlayerClick = []
                     else:
-                        sqSelected = (row, col)
+                        sqSelected = (mrow, mcol)
                         PlayerClick.append(sqSelected)
                         selected = True
                 else:
 
-
-            
-                    end_pos = pygame.mouse.get_pos()
-                    if mouse_pos != end_pos:
-                        white_or_black()
-                        move_chess(sqSelected, end_pos)
-                    selected = False  
+                    try:
+                        # text = record_audio_and_recognize()
+                        # index1, index2 = text[0].lower(), text[-1]
+                        
+                        # row=ord(index1)-97
+                        # col=int(index2)-1
+                        end_pos = pygame.mouse.get_pos()
+                        # end_pos = (row, col)
+                        print(end_pos)
+                        print(sqSelected)
+                        if mouse_pos != end_pos:
+                            white_or_black()
+                            move_chess(sqSelected, end_pos)
+                        selected = False  
+                    except ValueError:
+                        print("Некорректный ввод!")
+                    # if mouse_pos != end_pos:
+                    #     white_or_black()
+                    #     move_chess(sqSelected, end_pos)
+                    # selected = False  
             elif event.type == pygame.K_DOWN:
                 print("hello")
                 white_or_black()
