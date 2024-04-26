@@ -153,6 +153,7 @@ def move_piece(start_pos, end_pos):
         
     for _ in figure:
 
+        
         figure_type = figure["pawn"]
         if start_pos in figure_type:
 
@@ -163,23 +164,12 @@ def move_piece(start_pos, end_pos):
 
                 if start_pos[0] == 6 and end_pos == (start_pos[0]-2, start_pos[1]) or end_pos == (start_pos[0]-1, start_pos[1]):
                     
-                    # lists_of_black = []
-                    # for b_value in black_pieces.values():
-                    #     for v in b_value:
-                    #         lists_of_black.append(v)
-                    # # print(black_pieces)
-                    # lists_of_white = []
-                    # for w_value in white_pieces.values():
-                    #     for w in w_value:
-                    #         lists_of_white.append(w)
+                    
                     all_pieces = compare_list()
-                    # print(lists_of_black)
+
                     if end_pos in all_pieces:
                         white_or_black()
-                        # print("yes")
-                        
                     else:
-                        
                         figure_type[figure_type.index(start_pos)] = end_pos
                     
                 elif end_pos == (start_pos[0] - 1, start_pos[1] - 1) or end_pos == (start_pos[0] - 1, start_pos[1] + 1):
@@ -193,7 +183,7 @@ def move_piece(start_pos, end_pos):
                             enemy_pieces[enemy_piece_type].remove(end_pos)
                             break
                 
-                   
+
             else:
                 
                 
@@ -258,12 +248,6 @@ def move_piece(start_pos, end_pos):
                                 else:
                                     
                                     print(1)
-                            # white_or_black()
-                                    
-                                    # white_or_black()
-
-                                    # figure_horse[figure_horse.index(start_pos)] = start_pos
-
 
                                 
                         else:
@@ -318,23 +302,7 @@ def move_piece(start_pos, end_pos):
                         # figure_horse[figure_horse.index(start_pos)] = end_pos
             
         
-        # def is_path_clear(start_pos, end_pos, all_pieces):
-        #     # Проверяем, движется ли ладья по горизонтали или вертикали
-        #     if start_pos[0] == end_pos[0]:  # Проверяем вертикальное движение
-        #         start_row, end_row = min(start_pos[1], end_pos[1]), max(start_pos[1], end_pos[1])
-        #         for row in range(start_row + 1, end_row):
-        #             if (start_pos[0], row) in all_pieces:
-        #                 return False  # На пути есть фигура
-        #     elif start_pos[1] == end_pos[1]:  # Проверяем горизонтальное движение
-        #         start_col, end_col = min(start_pos[0], end_pos[0]), max(start_pos[0], end_pos[0])
-        #         for col in range(start_col + 1, end_col):
-        #             if (col, start_pos[1]) in all_pieces:
-        #                 return False  # На пути есть фигура
-        #     else:
-        #         # Ладья движется не по вертикали и не по горизонтали, это недопустимый ход для ладьи
-        #         return False
-            
-        #     return True  # Если препятствий нет на пути, возвращаем True
+        
         figure_rook = figure["rook"]
         if start_pos in figure_rook:
             if first_hod == "black":
