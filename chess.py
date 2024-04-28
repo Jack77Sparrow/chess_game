@@ -100,25 +100,28 @@ class InvalidMoveError(Exception):
 def move_chess(event, end_pos):
     global sqSelected, PlayerClick, white_pieces, black_pieces, first_hod
     #start position
+    print("end pos --> ", end_pos)
     row, col = event
-    sq_row = row // sq_size
-    sq_col = col // sq_size
+    
 
     #end position
     end_row, end_col = end_pos
-    esq_row = end_row // sq_size
-    esq_col = end_col // sq_size
-    new_pos = (esq_col, esq_row)
+    print(f"end row --> {end_row}\n end col {end_col}")
+    # esq_row = end_row // sq_size
+    # esq_col = end_col // sq_size
+    new_pos = (end_row, end_col)
+    print("new pos --> ", new_pos)
 
     
 
     
     if len(PlayerClick) == 0:  # Если это первый клик
-        sqSelected = (sq_col, sq_row)  # Фиксируем текущий выбранный квадрат
+        sqSelected = (col, row)  # Фиксируем текущий выбранный квадрат
         PlayerClick.append(new_pos)  # Добавляем позицию в список кликов игрока
         
     else:  # Если это второй клик
         # Перемещаем фигуру на новое место
+
         move_piece(PlayerClick[0], new_pos)
         # Сбрасываем выбранный квадрат и список кликов игрока
         sqSelected = ()
@@ -258,7 +261,7 @@ def move_piece(start_pos, end_pos):
                         white_or_black()
                         # figure_horse[figure_horse.index(start_pos)] = end_pos
                 else:
-                    pass
+                    print("non correct path")
             else:
                 
                 if (end_pos == (start_pos[0]-2, start_pos[1]-1) or end_pos == (start_pos[0]-2, start_pos[1]+1) or 
@@ -300,7 +303,8 @@ def move_piece(start_pos, end_pos):
                         print(figure_horse)
                         white_or_black()
                         # figure_horse[figure_horse.index(start_pos)] = end_pos
-            
+                else:
+                    print("non correct path")
         
         
         figure_rook = figure["rook"]
@@ -537,31 +541,45 @@ if "start" in lis:
                 run_game = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if not selected:
-                    mouse_pos = pygame.mouse.get_pos()
+                    # mouse_pos = pygame.mouse.get_pos()
+                    try:
+                        
+                        start = record_audio_and_recognize()
+                            
+                        
+                        index1, index2 = start[0].lower(), start[-1]
+                        row1=ord(index1)-97
+                        col1=int(index2)-1
+                        start_pos = (row1, col1)
+                        if sqSelected == (row1, col1):
+                            sqSelected = ()
+                            PlayerClick = []
+                        else:
+                            sqSelected = (row1, col1)
+                            PlayerClick.append(sqSelected)
+                            selected = True
+                    except ValueError:
+                        print("некоректний ввід")
+                    # mcol = mouse_pos[0] // sq_size
+                    # mrow = mouse_pos[1] // sq_size
                     
-                    
-                    mcol = mouse_pos[0] // sq_size
-                    mrow = mouse_pos[1] // sq_size
-                    if sqSelected == (mrow, mcol):
-                        sqSelected = ()
-                        PlayerClick = []
-                    else:
-                        sqSelected = (mrow, mcol)
-                        PlayerClick.append(sqSelected)
-                        selected = True
                 else:
 
                     try:
-                        # text = record_audio_and_recognize()
-                        # index1, index2 = text[0].lower(), text[-1]
-                        
-                        # row=ord(index1)-97
-                        # col=int(index2)-1
-                        end_pos = pygame.mouse.get_pos()
-                        # end_pos = (row, col)
+                        try:
+                            end = record_audio_and_recognize()
+                        except ConnectionResetError:
+                            
+                            continue
+                        index1, index2 = end[0].lower(), end[-1]
+                        print(end)
+                        row=ord(index1)-97
+                        col=int(index2)-1
+                        # end_pos = pygame.mouse.get_pos()
+                        end_pos = (row, col)
                         print(end_pos)
                         print(sqSelected)
-                        if mouse_pos != end_pos:
+                        if start_pos != end_pos:
                             white_or_black()
                             move_chess(sqSelected, end_pos)
                         selected = False  
