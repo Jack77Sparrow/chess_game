@@ -11,7 +11,8 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Движущиеся спрайты")
 
 # Цвета
-WHITE = (0, 0, 0)
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
 
 # Загрузка изображений для анимации
 def load_images_from_folder(folder):
@@ -59,13 +60,38 @@ all_sprites = pygame.sprite.Group()
 player = Player()
 all_sprites.add(player)
 
+# Функция для отрисовки текста на экране
+def draw_text(text, font, color, surface, x, y):
+    text_obj = font.render(text, True, color)
+    text_rect = text_obj.get_rect()
+    text_rect.center = (x, y)
+    surface.blit(text_obj, text_rect)
+
+# Функция для отображения начального экрана
+def show_start_screen():
+    screen.fill(BLACK)
+    draw_text("Нажмите Пробел, чтобы начать", pygame.font.Font(None, 48), WHITE, screen, WIDTH // 2, HEIGHT // 2)
+    pygame.display.flip()
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                waiting = False
+
 # Основной игровой цикл
 running = True
+show_start_screen()
 while running:
     # Обработка событий
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+            # Переход к игре при нажатии на пробел
+            show_start_screen()
 
     # Обновление экрана
     screen.fill(WHITE)
@@ -74,7 +100,7 @@ while running:
     pygame.display.flip()
 
     # Ограничение частоты кадров
-    pygame.time.Clock().tick(17)
+    pygame.time.Clock().tick(60)
 
 pygame.quit()
 sys.exit()

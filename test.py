@@ -1,27 +1,29 @@
-from figure import record_audio_and_recognize
+import pygame
+import sys
 
-loh = record_audio_and_recognize()
+pygame.init()
+screen = pygame.display.set_mode((600, 600))
+WHITE = (255, 255, 255)
 
-print(loh)
-def recurs(some):
-    index1, index2 = some[0].lower(), some[-1]
 
-    U = []
-
-    for i in range(8):
-        row = []
-        for j in range(8):
-            row.append((i, j))
-        U.append(row)
+def draw_text(text, font, color, surface, x, y):
+    text_obj = font.render(text, True, color)
+    text_rect = text_obj.get_rect()
+    text_rect.center = (x, y)
+    surface.blit(text_obj, text_rect)
+def show_start_page():
+    screen.fill(WHITE)
+    draw_text("putt space", pygame.font.Font(None, 48), (0, 0, 0), screen, 600//2, 600//2)
+    pygame.display.flip()
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                waiting = False
+    return
         
-    for k in U:
-        print(k)
-    print((U[ord(index1)-97][int(index2)-1]))
 
-try: 
-    recurs(loh)
-    
-except IndexError or ValueError:
-    print("try again")
-    recurs(loh)
-    
+

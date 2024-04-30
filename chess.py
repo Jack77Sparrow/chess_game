@@ -60,15 +60,16 @@ def draw_board(selected_sq):
             if (i, j) == selected_sq:
                 color = red
             pygame.draw.rect(screen, color, pygame.Rect(j * sq_size, i * sq_size, sq_size, sq_size))
-            if i == 0:
-                font = pygame.font.Font(None, 36)
-                text_surface = font.render(chr(97 + j), True, black)  # Використання chr(97 + j) для отримання a, b, c
-                screen.blit(text_surface, (j * sq_size + 10, i * sq_size + 10))
-            # Додати позначення для рядків (1, 2, 3)
             if j == 0:
                 font = pygame.font.Font(None, 36)
-                text_surface = font.render(str(i + 1), True, black)  # Використання str(i + 1) для отримання 1, 2, 3
-                screen.blit(text_surface, (j * sq_size + 10, i * sq_size + 10))
+                text_surface = font.render(chr(97 +i), True, black)  # Використання str(i + 1) для отримання 1, 2, 3
+                screen.blit(text_surface, (j * sq_size + 1, i * sq_size + 1))
+            # Додати позначення для рядків (1, 2, 3)
+            if i == 0:
+                font = pygame.font.Font(None, 36)
+                text_surface = font.render(str(j + 1), True, black)  # Використання chr(97 + j) для отримання a, b, c
+                screen.blit(text_surface, (j * sq_size + 1, i * sq_size + 1))
+                
 
 
 def draw_pieces():
@@ -83,10 +84,10 @@ def draw_pieces():
                 for pos in positions:
                     x, y = pos
                     screen.blit(images[f"{color}_{piece_type}"], (y * sq_size + sq_size // 10, x * sq_size + sq_size // 10))
-first_hod = 'black'
+first_hod = 'white'
 def white_or_black():
     global first_hod
-    first_hod = "white" if first_hod == "black" else 'black'
+    first_hod = "black" if first_hod == "white" else 'white'
 
 
 sqSelected = ()  # Текущий выбранный квадрат
@@ -215,7 +216,8 @@ def move_piece(start_pos, end_pos):
 
         else:
             pass
-
+        
+        correct_move = False
         figure_horse = figure["horse"]
 
         if start_pos in figure_horse:
@@ -226,6 +228,7 @@ def move_piece(start_pos, end_pos):
                     end_pos == (start_pos[0]+2, start_pos[1]-1) or end_pos == (start_pos[0]+2, start_pos[1]+1) or
                     end_pos == (start_pos[0]-1, start_pos[1]+2) or end_pos == (start_pos[0]+1, start_pos[1]+2) or
                     end_pos == (start_pos[0]-1, start_pos[1]-2) or end_pos == (start_pos[0]+1, start_pos[1]-2)):
+                    print("correct white hod")
                     # print(end_pos)
                     # print("___")
                     # print((start_pos[0]-2, start_pos[1]-1))
@@ -246,15 +249,15 @@ def move_piece(start_pos, end_pos):
                                     
                                     figure_horse[figure_horse.index(start_pos)] = end_pos
                                     enemy_pieces[enemy_piece_type].remove(end_pos)
+                                    correct_move = True
                                     break
-                                
-                                else:
-                                    
-                                    print(1)
+                        
+                               
 
                                 
                         else:
                             # white_or_black()
+                            correct_move = True
                             figure_horse[figure_horse.index(start_pos)] = end_pos
                     else:
                         
@@ -262,13 +265,15 @@ def move_piece(start_pos, end_pos):
                         # figure_horse[figure_horse.index(start_pos)] = end_pos
                 else:
                     print("non correct path")
+                    first_hod = "black"
+                    # continue
             else:
                 
                 if (end_pos == (start_pos[0]-2, start_pos[1]-1) or end_pos == (start_pos[0]-2, start_pos[1]+1) or 
                     end_pos == (start_pos[0]+2, start_pos[1]-1) or end_pos == (start_pos[0]+2, start_pos[1]+1) or
                     end_pos == (start_pos[0]-1, start_pos[1]+2) or end_pos == (start_pos[0]+1, start_pos[1]+2) or
                     end_pos == (start_pos[0]-1, start_pos[1]-2) or end_pos == (start_pos[0]+1, start_pos[1]-2)):
-                    
+                    print("correct black hod")
                     if end_pos not in white_pieces.values():
                         
                         
@@ -282,11 +287,11 @@ def move_piece(start_pos, end_pos):
                                     # white_or_black()
                                     figure_horse[figure_horse.index(start_pos)] = end_pos
                                     enemy_pieces[enemy_piece_type].remove(end_pos)
+                                    correct_move = True
                                     break
+                                correct_move = True
                             
-                                else:
-                                    # white_or_black()
-                                    print("no")
+                                
                             # white_or_black()
                                     
                                     
@@ -305,7 +310,12 @@ def move_piece(start_pos, end_pos):
                         # figure_horse[figure_horse.index(start_pos)] = end_pos
                 else:
                     print("non correct path")
-        
+                    first_hod = "white"
+                    # continue
+        if correct_move:
+            white_or_black()
+        else:
+            print("nice hod")
         
         figure_rook = figure["rook"]
         if start_pos in figure_rook:
@@ -527,16 +537,73 @@ def move_piece(start_pos, end_pos):
                         else:
                             figure_king[figure_king.index(start_pos)] = end_pos
                 else: pass
+def draw_text(text, font, color, surface, x, y):
+    text_obj = font.render(text, True, color)
+    text_rect = text_obj.get_rect()
+    text_rect.center = (x, y)
+    surface.blit(text_obj, text_rect)
 
 lis = ["start", "START", "Start", "начать", "старт"]
 
+def show_setting_page():
+    screen.fill((255, 100, 50))
+    draw_text("Settings", pygame.font.Font(None, 48), (0, 0, 0), screen, 600//2, 600//3)
+    pygame.display.flip()
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+        # Ожидание аудио-команды
+        something = record_audio_and_recognize()
+        print(something)
+        if something == "before":
+            show_start_page()
+            waiting = False
+
+def show_start_page():
+    screen.fill((255, 255, 255))
+    draw_text("Press Space or Say 'Start'", pygame.font.Font(None, 48), (0, 0, 0), screen, 600//2, 600//3)
+    pygame.display.flip()
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+        # Ожидание аудио-команды
+        starting = record_audio_and_recognize()
+        print(starting)
+        try:
+            if starting == "setting":
+                show_setting_page()
+                waiting = False
+            elif starting in lis:
+                waiting = False
+            
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                waiting = False
+        except UnboundLocalError:
+            continue
+    
+
+# Первоначально показываем страницу "Start"
+show_start_page()
+
+
+
+previous_moves = [(0, 0)]
 if "start" in lis:
+    show_start_page()
     selected = False
     run_game = True
     while run_game:
-        
-        for event in pygame.event.get():
 
+        for event in pygame.event.get():
+            
             if event.type == pygame.QUIT:
                 run_game = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -545,7 +612,7 @@ if "start" in lis:
                     try:
                         
                         start = record_audio_and_recognize()
-                            
+                        print(start)
                         
                         index1, index2 = start[0].lower(), start[-1]
                         row1=ord(index1)-97
@@ -557,6 +624,9 @@ if "start" in lis:
                         else:
                             sqSelected = (row1, col1)
                             PlayerClick.append(sqSelected)
+                            nex1 = record_audio_and_recognize()
+                            if nex1 == "next":
+                                end = record_audio_and_recognize()
                             selected = True
                     except ValueError:
                         print("некоректний ввід")
@@ -564,27 +634,30 @@ if "start" in lis:
                     # mrow = mouse_pos[1] // sq_size
                     
                 else:
-
+                    
                     try:
-                        try:
-                            end = record_audio_and_recognize()
-                        except ConnectionResetError:
-                            
-                            continue
-                        index1, index2 = end[0].lower(), end[-1]
+                        
+                        # end = record_audio_and_recognize()
                         print(end)
-                        row=ord(index1)-97
-                        col=int(index2)-1
+                        
+                        
+                        index3, index4 = end[0].lower(), end[-1]
+
+                        print(end)
+                        row=ord(index3)-97
+                        col=int(index4)-1
                         # end_pos = pygame.mouse.get_pos()
                         end_pos = (row, col)
                         print(end_pos)
                         print(sqSelected)
+                        
                         if start_pos != end_pos:
                             white_or_black()
                             move_chess(sqSelected, end_pos)
                         selected = False  
-                    except ValueError:
-                        print("Некорректный ввод!")
+                        previous_moves.append(((index1, index2), (index3, index4)))
+                    except ValueError or ConnectionResetError:
+                        continue
                     # if mouse_pos != end_pos:
                     #     white_or_black()
                     #     move_chess(sqSelected, end_pos)
@@ -593,18 +666,31 @@ if "start" in lis:
                 print("hello")
                 white_or_black()
 
-        
+        for move in previous_moves:
+            start, end = move
 
         screen.fill((255,255,255))
         draw_board(sqSelected)
         draw_pieces()
         # screen.fill((0,0,0))
+        text1 = "prewiev hod"
+        text2 = f"{start} : {end}"
+
+        prviews_hod = pygame.font.Font(None, 24)
+        hod1 = prviews_hod.render(text1, True, (0,0,0))
+        hod2 = prviews_hod.render(text2, True, (0,0,0))
+        text_hod1 = hod1.get_rect(center = (800-100, 100))
+        text_hod2 = hod2.get_rect(center = (800-100, 120))
+        screen.blit(hod1, text_hod1)
+        screen.blit(hod2, text_hod2)
+        
         font = pygame.font.Font(None, 40)
         text = font.render(f"turn: {first_hod}", True, (0, 0, 0))
         text_rect = text.get_rect(center=(800-100, 50))
         
 
         screen.blit(text, text_rect)
+       
         pygame.display.flip()
         
     pygame.quit()
