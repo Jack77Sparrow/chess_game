@@ -3,15 +3,17 @@ import sys
 import os
 from const import *
 from figure import record_audio_and_recognize
-
+from test2 import voise
+import time
 pygame.init()
 
 pygame.display.set_caption("Chess game")
 
 
 #initialised a values
-image_folder = 'photos'
-
+image_folder1 = '/Users/drake/Desktop/vscode/oshi/progect/photos/type1'
+image_folder2 = "/Users/drake/Desktop/vscode/oshi/progect/photos/type2"
+image_folder3 = "/Users/drake/Desktop/vscode/oshi/progect/photos/type3"
 pieces = ['pawn', 'horse', 'rook', 'bishop', 'king', 'queen']
 
 colors = ['white','black']
@@ -44,11 +46,36 @@ red = pygame.Color(255, 0, 0)
 images = {}
 for color in colors:
     for piece in pieces:
-        img_path = os.path.join(image_folder, color, f"{color}_{piece}.png")
+        img_path = os.path.join(image_folder1, color, f"{color}_{piece}.png")
         img = pygame.transform.scale(pygame.image.load(img_path), (size, size))
         images[f"{color}_{piece}"] = img
 
+images2 = {}
+for color in colors:
+    for piece in pieces:
+        img_path = os.path.join(image_folder2, color, f"{piece}{color[0].upper()}.png")
+        img = pygame.transform.scale(pygame.image.load(img_path), (size, size))
+        images2[f"{piece}{color[0].upper()}"] = img
 
+images3 = {}
+for color in colors:
+    for piece in pieces:
+        img_path = os.path.join(image_folder3, color, f"{color}_{piece}.PNG")
+        img = pygame.transform.scale(pygame.image.load(img_path), (size, size))
+        images3[f"{color}_{piece}"] = img
+
+button_wight = 200
+button_height = 70
+button_x, button_y = 600, 350
+
+
+font = pygame.font.Font(None, 20)
+
+def draw_button():
+    pygame.draw.rect(screen, (23, 100, 200), (button_x, button_y, button_wight, button_height))
+    text = font.render("switch skin", True, (0,0,0))
+    text_position = text.get_rect(center= (800-100, 400))
+    screen.blit(text, text_position)
 
 def draw_board(selected_sq):
     for i in range(Dimensions):
@@ -56,34 +83,56 @@ def draw_board(selected_sq):
             if (i + j) % 2 == 0:
                 color = white
             else:
-                color = grey
+                color = black
             if (i, j) == selected_sq:
                 color = red
             pygame.draw.rect(screen, color, pygame.Rect(j * sq_size, i * sq_size, sq_size, sq_size))
-            if j == 0:
+            if i == 0:  # Если это первая строка
+                # Рисуем буквы для обозначения столбцов в правом верхнем углу
                 font = pygame.font.Font(None, 36)
-                text_surface = font.render(chr(97 +i), True, black)  # Використання str(i + 1) для отримання 1, 2, 3
-                screen.blit(text_surface, (j * sq_size + 1, i * sq_size + 1))
-            # Додати позначення для рядків (1, 2, 3)
-            if i == 0:
+                text_color = black if (i + j) % 2 == 0 else white  # Чередуем цвета белый и черный
+                text_surface = font.render(str(j+1), True, text_color)
+                screen.blit(text_surface, (j * sq_size + sq_size - 16, 0))  # Отступ от верхнего края
+            if j == 0:  # Если это первый столбец
+                # Рисуем цифры для обозначения строк в левом нижнем углу
                 font = pygame.font.Font(None, 36)
-                text_surface = font.render(str(j + 1), True, black)  # Використання chr(97 + j) для отримання a, b, c
-                screen.blit(text_surface, (j * sq_size + 1, i * sq_size + 1))
-                
+                text_color = black if (i + j) % 2 == 0 else white  # Чередуем цвета белый и черный
+                text_surface = font.render(chr(97 + i), True, text_color)
+                screen.blit(text_surface, (3, i * sq_size + sq_size - 70))  # Отступ от левого края
+            # chr(97 + j)
+            # Добавление буквенной нумерации столбцов
+            if i == 0:  
+                font = pygame.font.Font(None, 36)
+                text_color = white if (i + j) % 2 == 0 else black  # Чередуем цвета белый и черный
+                text_surface = font.render(str(i+1), True, text_color)
+                screen.blit(text_surface, (j * sq_size + 10, i * sq_size + 10))  # Отступ для отображения букв          
 
 
-def draw_pieces():
+def draw_pieces1():
     for color in colors:
         if color == "black":
             for piece_type, positions in black_pieces.items():
                 for pos in positions:
                     x, y = pos
-                    screen.blit(images[f"{color}_{piece_type}"], (y * sq_size + sq_size // 10, x * sq_size + sq_size // 10))
+                    screen.blit(images3[f"{color}_{piece_type}"], (y * sq_size + sq_size // 10, x * sq_size + sq_size // 10))
         if color == "white":
             for piece_type, positions in white_pieces.items():
                 for pos in positions:
                     x, y = pos
-                    screen.blit(images[f"{color}_{piece_type}"], (y * sq_size + sq_size // 10, x * sq_size + sq_size // 10))
+                    screen.blit(images3[f"{color}_{piece_type}"], (y * sq_size + sq_size // 10, x * sq_size + sq_size // 10))
+
+def draw_pieces2():
+    for color in colors:
+        if color == "black":
+            for piece_type, positions in black_pieces.items():
+                for pos in positions:
+                    x, y = pos
+                    screen.blit(images2[f"{piece_type}{color[0].upper()}"], (y * sq_size + sq_size // 10, x * sq_size + sq_size // 10))
+        if color == "white":
+            for piece_type, positions in white_pieces.items():
+                for pos in positions:
+                    x, y = pos
+                    screen.blit(images2[f"{piece_type}{color[0].upper()}"], (y * sq_size + sq_size // 10, x * sq_size + sq_size // 10))
 first_hod = 'white'
 def white_or_black():
     global first_hod
@@ -257,7 +306,7 @@ def move_piece(start_pos, end_pos):
                                 
                         else:
                             # white_or_black()
-                            correct_move = True
+                            
                             figure_horse[figure_horse.index(start_pos)] = end_pos
                     else:
                         
@@ -289,7 +338,7 @@ def move_piece(start_pos, end_pos):
                                     enemy_pieces[enemy_piece_type].remove(end_pos)
                                     correct_move = True
                                     break
-                                correct_move = True
+                                # correct_move = True
                             
                                 
                             # white_or_black()
@@ -562,10 +611,9 @@ def show_setting_page():
         if something == "before":
             show_start_page()
             waiting = False
-
 def show_start_page():
     screen.fill((255, 255, 255))
-    draw_text("Press Space or Say 'Start'", pygame.font.Font(None, 48), (0, 0, 0), screen, 600//2, 600//3)
+    draw_text("Press Space to Start", pygame.font.Font(None, 48), (0, 0, 0), screen, 600//2, 600//3)
     pygame.display.flip()
     waiting = True
     while waiting:
@@ -573,47 +621,56 @@ def show_start_page():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-
-        # Ожидание аудио-команды
-        starting = record_audio_and_recognize()
-        print(starting)
-        try:
-            if starting == "setting":
-                show_setting_page()
-                waiting = False
-            elif starting in lis:
-                waiting = False
-            
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                # Если была нажата пробел, запускаем игру
                 waiting = False
-        except UnboundLocalError:
-            continue
+                time.sleep(1)
+                # voise("игра началась, удачи")
+                
+                
     
 
 # Первоначально показываем страницу "Start"
 show_start_page()
 
+current_skin = 1
+def change_skin():
+    global current_skin
+    current_skin = 2 if current_skin ==1 else 1
 
 
+def draw_poeces():
+    if current_skin ==1:
+        draw_pieces1()
+
+    else:
+        draw_pieces2()
 previous_moves = [(0, 0)]
 if "start" in lis:
-    show_start_page()
+    # show_start_page()
     selected = False
     run_game = True
+    button = False
     while run_game:
 
         for event in pygame.event.get():
             
             if event.type == pygame.QUIT:
                 run_game = False
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_s:
+                button = True
             elif event.type == pygame.MOUSEBUTTONDOWN:
+
+                
                 if not selected:
                     # mouse_pos = pygame.mouse.get_pos()
                     try:
                         
                         start = record_audio_and_recognize()
                         print(start)
-                        
+                        if start.lower() == f"age and {start[-1]}" or start.lower() == f"agent {start[-1]}" or start.lower() == f"asian {start[-1]}" or start.lower() == f'age {start[-1]}':
+                            
+                            start = f"h{start[-1]}"
                         index1, index2 = start[0].lower(), start[-1]
                         row1=ord(index1)-97
                         col1=int(index2)-1
@@ -624,12 +681,12 @@ if "start" in lis:
                         else:
                             sqSelected = (row1, col1)
                             PlayerClick.append(sqSelected)
-                            nex1 = record_audio_and_recognize()
-                            if nex1 == "next":
-                                end = record_audio_and_recognize()
+                            
+                            
                             selected = True
-                    except ValueError:
+                    except ValueError or ConnectionResetError:
                         print("некоректний ввід")
+                        continue
                     # mcol = mouse_pos[0] // sq_size
                     # mrow = mouse_pos[1] // sq_size
                     
@@ -637,7 +694,7 @@ if "start" in lis:
                     
                     try:
                         
-                        # end = record_audio_and_recognize()
+                        end = record_audio_and_recognize()
                         print(end)
                         
                         
@@ -657,12 +714,13 @@ if "start" in lis:
                         selected = False  
                         previous_moves.append(((index1, index2), (index3, index4)))
                     except ValueError or ConnectionResetError:
+                        print("некоректний ввід")
                         continue
                     # if mouse_pos != end_pos:
                     #     white_or_black()
                     #     move_chess(sqSelected, end_pos)
                     # selected = False  
-            elif event.type == pygame.K_DOWN:
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_g:
                 print("hello")
                 white_or_black()
 
@@ -671,11 +729,21 @@ if "start" in lis:
 
         screen.fill((255,255,255))
         draw_board(sqSelected)
-        draw_pieces()
+        
+        draw_button()
         # screen.fill((0,0,0))
         text1 = "prewiev hod"
         text2 = f"{start} : {end}"
+        draw_pieces1()
+        if button:
+            
+            draw_board(sqSelected)
+            draw_pieces2()
+            
+            # button = False
+        
 
+        
         prviews_hod = pygame.font.Font(None, 24)
         hod1 = prviews_hod.render(text1, True, (0,0,0))
         hod2 = prviews_hod.render(text2, True, (0,0,0))
@@ -685,6 +753,7 @@ if "start" in lis:
         screen.blit(hod2, text_hod2)
         
         font = pygame.font.Font(None, 40)
+
         text = font.render(f"turn: {first_hod}", True, (0, 0, 0))
         text_rect = text.get_rect(center=(800-100, 50))
         

@@ -7,7 +7,7 @@ height = 600
 sq_size = whidth // 8
 size = sq_size // 1.3
 screen = pygame.display.set_mode((800, height))
-white = pygame.Color(250, 218, 95)
+white = pygame.Color(225, 225, 225)
 black = pygame.Color(0, 0, 0)
 grey = pygame.Color(150, 75, 0)
 
