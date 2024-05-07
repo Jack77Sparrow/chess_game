@@ -270,7 +270,7 @@ def move_piece(start_pos, end_pos):
         figure_horse = figure["horse"]
 
         if start_pos in figure_horse:
-
+            print(first_hod)
             if first_hod == "black":
 
                 if (end_pos == (start_pos[0]-2, start_pos[1]-1) or end_pos == (start_pos[0]-2, start_pos[1]+1) or 
@@ -298,7 +298,7 @@ def move_piece(start_pos, end_pos):
                                     
                                     figure_horse[figure_horse.index(start_pos)] = end_pos
                                     enemy_pieces[enemy_piece_type].remove(end_pos)
-                                    correct_move = True
+                                    # correct_move = True
                                     break
                         
                                
@@ -313,9 +313,12 @@ def move_piece(start_pos, end_pos):
                         white_or_black()
                         # figure_horse[figure_horse.index(start_pos)] = end_pos
                 else:
-                    print("non correct path")
-                    first_hod = "black"
-                    # continue
+                    print("blacknon correct path")
+                    first_hod = "white" if first_hod == "black" else "white"
+                    first_hod = "black" if first_hod == "white" else "black"
+                    # first_hod = "white" if first_hod == "black" else "white"
+                    
+                    
             else:
                 
                 if (end_pos == (start_pos[0]-2, start_pos[1]-1) or end_pos == (start_pos[0]-2, start_pos[1]+1) or 
@@ -336,7 +339,7 @@ def move_piece(start_pos, end_pos):
                                     # white_or_black()
                                     figure_horse[figure_horse.index(start_pos)] = end_pos
                                     enemy_pieces[enemy_piece_type].remove(end_pos)
-                                    correct_move = True
+                                    # correct_move = True
                                     break
                                 # correct_move = True
                             
@@ -358,9 +361,10 @@ def move_piece(start_pos, end_pos):
                         white_or_black()
                         # figure_horse[figure_horse.index(start_pos)] = end_pos
                 else:
-                    print("non correct path")
-                    first_hod = "white"
-                    # continue
+                    print("white non correct path")
+                    
+                    first_hod = "black" if first_hod == "white" else "black"
+                    first_hod = "white" if first_hod == "black" else "white"
         if correct_move:
             white_or_black()
         else:
@@ -668,9 +672,17 @@ if "start" in lis:
                         
                         start = record_audio_and_recognize()
                         print(start)
-                        if start.lower() == f"age and {start[-1]}" or start.lower() == f"agent {start[-1]}" or start.lower() == f"asian {start[-1]}" or start.lower() == f'age {start[-1]}':
+                        f = [f"fancy",f'fancy {start[-1]}', f"iphone {start[-1]}", f"definitely", f"infantry", f"avento", f"evan to"]
+                        h = [f"age and {start[-1]}", f"agent {start[-1]}", f"asian {start[-1]}", f'age {start[-1]}', f"regent {start[-1]}", f"agency"]
+                        a = [f"i am too", f"i am {start[-1]}", f"i am to", f'a.m. to']
+                        c = [f"siento", f"cnc", f'cm to']
+                        g = [f"gmc"]
+                        if start.lower() in h:
                             
                             start = f"h{start[-1]}"
+                        elif start.lower() in f:
+                            
+                            start = f"f{start[-1]}"
                         index1, index2 = start[0].lower(), start[-1]
                         row1=ord(index1)-97
                         col1=int(index2)-1
@@ -696,7 +708,9 @@ if "start" in lis:
                         
                         end = record_audio_and_recognize()
                         print(end)
-                        
+                        e_f = [f'fancy {end[-1]}', f"iphone {end[-1]}"]
+                        if end.lower() in e_f:
+                            end = f"f{end[-1]}"
                         
                         index3, index4 = end[0].lower(), end[-1]
 
